@@ -1,4 +1,4 @@
-<h1 align="center"><img src="docs/assets/hexels-logo.gif" width="64" alt="Animated Honeycomb-Surfels bee"> Honeycomb-Surfels</h1>
+<h1 align="center"><img src="docs/assets/hexels-logo.gif" width="48" align="absmiddle" alt="Animated Honeycomb-Surfels bee"> Honeycomb-Surfels</h1>
 
 <p align="center"><strong>Compact Hexagonal Primitives for Efficient Scene Rendering and Reconstruction</strong></p>
 
@@ -6,8 +6,9 @@
 
 <p align="center"><a href="https://honeycomb-surfels.github.io/">Project</a> · <a href="https://honeycomb-surfels.github.io/h1.pdf">Paper</a> · <a href="https://arxiv.org/abs/2610.37668">arXiv</a> · <a href="https://huggingface.co/jhu-ccvl/Hexels">Pretrained models</a></p>
 
-> [!NOTE]
-> <sub><strong>Abstract.</strong> Hexels represent 3D scenes and 2D images with compact hexagonal surface primitives. Each primitive combines a planar shape with a color field that varies across it, allowing a single Hexel to describe both a surface patch and changes in its appearance. We study the quality and efficiency of this representation in novel-view synthesis, surface reconstruction and image fitting, including comparisons under model-memory and primitive-count budgets. The <a href="https://honeycomb-surfels.github.io/h1.pdf">paper</a> gives the full results and analysis.</sub>
+<blockquote>
+<p><sub><strong>Abstract.</strong> Novel view synthesis and 3D reconstruction have advanced rapidly with radiance fields and splatting, yet their memory and computational demands limit their use in resource-constrained settings. We introduce Hexels: novel planar hexagonal surface elements with a first-order spatial color field for efficient 3D scene and 2D image representation. Hexels exploit locally planar regions with smoothly varying appearance using fewer, larger primitives. Their hexagonal support provides an area- and boundary-efficient domain, while the local color field captures appearance variation within each primitive. Across 34 scenes, Hexels improve PSNR over memory-matched 2DGS by 4.53–7.38 dB across datasets while requiring lower training VRAM. We further ablate Hexels by showing that per primitive, Hexels outperform 2DGS by upto 4.74 dB while using lower training VRAM and having 2.31× faster FPS. Even in unconstrained settings, Hexels offers complementary quality-memory trade-offs. For efficient 3D surface reconstruction, Hexels reduce error by 28.9% compared with memory-matched 2DGS across 15 DTU scans. On 6 Tanks and Temples surface scenes, Hexels achieves the highest mean F1 among compared methods (34.38%, versus 31.72% for 2DGS). We further also show that Hexels, as a general primitive, improves 2D image representation over Image-GS. Hexels push the Pareto frontier on the quality-efficiency trade-off of surface-aligned primitives.</sub></p>
+</blockquote>
 
 ![A Hexel's position, tangent directions, local color gradient and soft boundary.](docs/assets/hexel-method.webp)
 
@@ -101,6 +102,10 @@ Mip-NeRF 360 uses `images_4` outdoors and `images_2` indoors. T&T NVS uses the p
 
 ## Train and render a 3D scene
 
+![Ground truth, 2DGS, Triangle Splatting, MeshSplatting and Hexels on a held-out Room view, with matching close-ups.](docs/assets/scene-comparison-3d.png)
+
+<sub>From Figure 5 of the paper: Room (Mip-NeRF 360), under matched model-memory budgets, using fixed-population Hexels V1. The same shelf detail is enlarged for each method.</sub>
+
 Start with a registered scene in the dataset layout above. This example trains DTU scan24 for 30K steps, holding out every eighth registered view for testing:
 
 ```bash
@@ -160,6 +165,10 @@ Fresh training can give different values even with the same seed: CUDA gradient 
 
 ## Fit and decode a 2D image
 
+![Image-GS, Hexels and ground truth for a lemon painting, followed by their RGB-error maps.](docs/assets/image-fitting-2d.png)
+
+<sub>From Figure 3 of the paper: a 2048 × 2048 Image-GS benchmark image, fitted with 10K primitives per method. Both error maps share the same scale; brighter colors indicate larger errors.</sub>
+
 Fit an RGB image, then render its stored Hexel representation:
 
 ```bash
@@ -196,21 +205,23 @@ python -m scripts.evaluate_image --model outputs/my_image/step_005100_mixed14.hx
 
 ## Surfaces and wireframes
 
+<img src="docs/assets/hexel-cells.png" align="right" width="46%" alt="DTU skull and toy: Hexel renders, visible-cell boundaries and colored surface cells.">
+
 Surface reconstruction fuses rendered depths into a triangle mesh. Wireframe export reads the learned Hexels directly and writes their hexagonal boundaries and colored faces.
 
-![Rendered scenes, analytic Hexel boundaries and colored Hexel cells.](docs/assets/hexel-cells.png)
+The examples on the right show DTU scan65 and scan83. Each row contains the Hexel render, visible-cell boundaries and spatial color on the cells. The panels use dataset foreground masks and the same crop.
 
-<sub>DTU scan65 and scan83: RGB rendering, visible-cell boundaries and spatial color on the cells. The panels use dataset foreground masks and a shared crop; the cells remain independent polygons.</sub>
+The exported PLY contains faces, line segments and primitive IDs. The cells remain independent polygons. This exporter supports base Hexels; checkpoints containing child primitives are rejected.
 
-Export the cells of the fixed-population model trained above; this step can run on CPU:
+Export the fixed-population model trained above on CPU:
+
+<br clear="both">
 
 ```bash
 python -m scripts.extract_hexels_wireframe \
   --checkpoint outputs/scan24/checkpoints/ckpt_030000.pt \
   --output outputs/scan24/hexel_cells.ply --color-mode spatial --min-opacity 0.2
 ```
-
-The PLY contains faces, line segments and primitive IDs. This exporter currently supports base Hexels; checkpoints containing child primitives are rejected.
 
 <details>
 <summary><strong>Train and extract a surface mesh</strong></summary>
