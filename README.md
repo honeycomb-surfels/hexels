@@ -6,15 +6,9 @@
 
 <p align="center"><a href="https://honeycomb-surfels.github.io/">Project page</a> · <a href="https://honeycomb-surfels.github.io/h1.pdf">Paper</a> · <a href="https://arxiv.org/abs/2610.37668">arXiv</a> · <a href="https://github.com/honeycomb-surfels/hexels">GitHub code</a> · <a href="https://huggingface.co/jhu-ccvl/Hexels">Paper checkpoints</a></p>
 
-Run the trainer from its source checkout using the editable (`-e`) install.
-The kernel can also be installed as an ordinary wheel; the viewer needs the
-`hexels` package installed alongside it.
+## Abstract
 
-The [kernel](https://github.com/honeycomb-surfels/hexel-kernel) and
-[viewer](https://github.com/honeycomb-surfels/hexel-viewer) are Git submodules
-under `submodules/`. Dataset images,
-checkpoints, environments and generated experiment outputs are not bundled in
-the source repositories. Paper checkpoints are distributed separately on Hugging Face below.
+Novel view synthesis and 3D reconstruction have advanced rapidly with radiance fields and splatting, yet their memory and computational demands limit their use in resource-constrained settings. We introduce Hexels: novel planar hexagonal surface elements with a first-order spatial color field for efficient 3D scene and 2D image representation. Hexels exploit locally planar regions with smoothly varying appearance using fewer, larger primitives. Their hexagonal support provides an area- and boundary-efficient domain, while the local color field captures appearance variation within each primitive. Across 34 scenes, Hexels improve PSNR over memory-matched 2DGS by 4.53–7.38 dB across datasets while requiring lower training VRAM. We further ablate Hexels by showing that per primitive, Hexels outperform 2DGS by upto 4.74 dB while using lower training VRAM and having 2.31× faster FPS. Even in unconstrained settings, Hexels offers complementary quality-memory trade-offs. For efficient 3D surface reconstruction, Hexels reduce error by 28.9% compared with memory-matched 2DGS across 15 DTU scans. On 6 Tanks and Temples surface scenes, Hexels achieves the highest mean F1 among compared methods (34.38%, versus 31.72% for 2DGS). We further also show that Hexels, as a general primitive, improves 2D image representation over Image-GS. Hexels push the Pareto frontier on the quality-efficiency trade-off of surface-aligned primitives.
 
 ## Requirements
 
@@ -41,6 +35,16 @@ External baselines have separate PyTorch/CUDA requirements; follow their
 into the Hexels environment.
 
 ## Install
+
+Run the trainer from its source checkout using the editable (`-e`) install.
+The kernel can also be installed as an ordinary wheel; the viewer needs the
+`hexels` package installed alongside it.
+
+The [kernel](https://github.com/honeycomb-surfels/hexel-kernel) and
+[viewer](https://github.com/honeycomb-surfels/hexel-viewer) are Git submodules
+under `submodules/`. Dataset images,
+checkpoints, environments and generated experiment outputs are not bundled in
+the source repositories. Paper checkpoints are distributed separately on Hugging Face below.
 
 ```bash
 git clone --recurse-submodules https://github.com/honeycomb-surfels/hexels.git
@@ -300,10 +304,6 @@ or when `--source-path data/<dataset>/<scene>` is given. The whole exported site
 can be copied to another machine. Rendering then runs in that machine's browser. The CUDA viewer supports pretrained checkpoints;
 live viewing is an opt-in trainer wrapper. Connected live viewing adds work
 and should not be used for paper training-time measurements.
-
-## Abstract
-
-Novel view synthesis and 3D reconstruction have advanced rapidly with radiance fields and splatting, yet their memory and computational demands limit their use in resource-constrained settings. We introduce Hexels: novel planar hexagonal surface elements with a first-order spatial color field for efficient 3D scene and 2D image representation. Hexels exploit locally planar regions with smoothly varying appearance using fewer, larger primitives. Their hexagonal support provides an area- and boundary-efficient domain, while the local color field captures appearance variation within each primitive. Across 34 scenes, Hexels improve PSNR over memory-matched 2DGS by 4.53–7.38 dB across datasets while requiring lower training VRAM. We further ablate Hexels by showing that per primitive, Hexels outperform 2DGS by upto 4.74 dB while using lower training VRAM and having 2.31× faster FPS. Even in unconstrained settings, Hexels offers complementary quality-memory trade-offs. For efficient 3D surface reconstruction, Hexels reduce error by 28.9% compared with memory-matched 2DGS across 15 DTU scans. On 6 Tanks and Temples surface scenes, Hexels achieves the highest mean F1 among compared methods (34.38%, versus 31.72% for 2DGS). We further also show that Hexels, as a general primitive, improves 2D image representation over Image-GS. Hexels push the Pareto frontier on the quality-efficiency trade-off of surface-aligned primitives.
 
 ## Licenses
 
