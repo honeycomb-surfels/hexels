@@ -99,8 +99,10 @@ def prepare(output: Path, config: dict, anchors: list[Path], smoke: bool, scenes
         provenance = None if smoke else output / "provenance/provenance.json"
         jobs.append({"id": run["id"], "dataset": run["dataset"], "scene": run["scene"], "method": run["arm"],
                      "status": "ready", "cwd": str(ROOT), "result": job["result"],
-                     "commands": [wrapped(command, cwd, directory / "resources_training.json", provenance),
-                                  wrapped(evaluate, ROOT, directory / "resources_evaluation.json", provenance)],
+                     "commands": [wrapped(command, cwd, directory / "resources_training.json", provenance,
+                                          training_method=method, interval=config["measurement"]["resource_sample_seconds"]),
+                                  wrapped(evaluate, ROOT, directory / "resources_evaluation.json", provenance,
+                                          interval=config["measurement"].get("evaluation_resource_sample_seconds", 0.2))],
                      "command_stages": ["train", "evaluate_and_video"]})
     _write_manifest(output / "manifests/cameras.json", {"jobs": camera_jobs, "job_count": len(camera_jobs)})
     _write_manifest(output / "manifests/jobs.json", {"jobs": jobs, "job_count": len(jobs)})

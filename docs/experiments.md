@@ -16,6 +16,60 @@ The extra T&T NVS scenes require their corresponding registered COLMAP/image dat
 
 Fixed and mixed-growth V1/V2/V3 use the same 30K schedule and seed policy in `configs/nvs.json`. Count controls use a ceiling while retaining native adaptive updates. Learned-state controls count every required scene component, including textures, grids and topology where applicable. Model state, deployment files and training GPU memory are separate measurements.
 
+## Training memory
+
+The NVS and capacity runners sample NVML memory for the training process and its
+descendants every 5 ms by default. They filter by PID across GPU devices, so other
+jobs on the same GPU are excluded. `resource_sample_seconds` configures the
+requested training interval. Evaluation retains its previous 200 ms monitoring
+interval via `evaluation_resource_sample_seconds`, preserving the existing FPS
+measurement path. Each interval is passed explicitly to its phase. Query overhead and
+scheduling can lengthen the actual interval; reported peaks are observed samples,
+not guaranteed instantaneous maxima.
+Slow RAM/process-tree enumeration runs separately at its original 200 ms rate;
+it does not block GPU polling. The JSON records actual GPU sampling intervals
+and a separate `rss_series` for RAM peaks/averages.
+
+Use `resources_training.json`'s `peak_gpu_bytes / 2**30` for peak training VRAM in
+GiB. This includes context, allocator reservations, initialization, checkpointing
+and native in-training reporting. Separate evaluation/video uses
+`resources_evaluation.json`. `average_gpu_bytes` is a time-weighted average and
+must not replace the peak. For staged training, take the maximum training peak
+across stages per scene, then average per-scene peaks for a dataset table.
+The trainer's legacy `peak_gpu_used_gb` samples whole-device usage and can include
+other jobs; its PyTorch allocated/reserved peaks are separate diagnostics.
+The older staged suite's `peak_train_used_or_reserved_gb` and
+`peak_training_gpu_gb` columns inherit those legacy counters, not process VRAM.
+
+Training commands use `--training-method` to keep only cached RGB images on CPU.
+Masks, optional depth, camera transforms, learned appearance and optimizer state
+stay on their native GPU devices. Hexels and 2DGS already cache RGB on CPU; their
+camera constructors are audited without changing their initialization. Other
+baseline constructors change only RGB placement. The helper checks image
+residency and logs the cache/device audit. It preserves RGB values, training
+losses, budgets, seeds and native topology updates.
+
+For Nexels only, three validation VGG-LPIPS statements are excluded. Its learned
+appearance, training loss, validation renders and L1/PSNR reporting remain native.
+No estimated RGB-cache or VGG allocation is subtracted from a measured peak.
+NVML errors make the measurement incomplete even when the child exits cleanly.
+
+Use fresh output roots and capture new provenance after changing this policy.
+Existing resource files retain the interval and policy under which they ran.
+The campaign audit checks recorded intervals and the declared training policy;
+measurements from a different policy cannot satisfy a new run's resource checks.
+For a standalone training measurement from the native trainer's directory:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python /path/to/hexels_main/scripts/measure_command.py \
+  --training-method nexels --output /fresh/resources_training.json \
+  -- /path/to/native/environment/bin/python train.py <native arguments> --data_device cuda
+```
+
+Hexels commands must include `--skip_postprocess` to keep separate final
+rendering/metrics outside training memory. The generic wrapper without
+`--training-method` preserves the command's own cache and validation policy.
+
 ## All-view geometry
 
 The paper's surface models use `scripts.train_scene --all-views --surface`, a single 30K run with median-depth normal consistency and ray distortion, and `--init-geometry` with the published MVS pack for the `-mvs_` models. Official DTU/T&T surface evaluation uses all-view checkpoints. Mesh extraction defaults to median depth; TSDF settings follow the dataset-specific conventions in `datasets_2dgs.md`.

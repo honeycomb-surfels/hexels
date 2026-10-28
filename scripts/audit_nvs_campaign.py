@@ -53,6 +53,17 @@ def audit(root: Path) -> dict:
             resource = json.loads(path.read_text()) if path.exists() else {}
             if not resource.get("complete") or resource.get("peak_gpu_bytes", 0) <= 0:
                 issues.append(f"resource_{phase}")
+            else:
+                measurement = job["measurement"]
+                expected_interval = (measurement["resource_sample_seconds"] if phase == "training"
+                                     else measurement.get("evaluation_resource_sample_seconds", 0.2))
+                if resource["sample_interval_seconds"] != expected_interval:
+                    issues.append(f"resource_{phase}_interval")
+                policy = measurement.get("training_memory_policy")
+                if phase == "training" and policy and (
+                        resource.get("training_memory_policy") != policy
+                        or resource.get("training_method") != job["method"]):
+                    issues.append("resource_training_policy")
         row = {"id": job["id"], "method": job["method"], "dataset": job["dataset"],
                "complete": not issues, "issues": issues, "smoke": job["smoke"]}
         if result.get("complete"):

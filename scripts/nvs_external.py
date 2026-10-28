@@ -24,7 +24,7 @@ def training_command(job: dict, settings: dict, smoke: bool) -> tuple[list[str],
     entrypoint = "train_regular_densification.py" if method == "milo" and job["dataset"] == "dtu" else "train.py"
     command = [str(python), entrypoint, "-s", settings["source_path"], "-m", job["model_path"],
                "--images", settings["images"], "--resolution", str(settings["resolution"]),
-               "--eval", "--data_device", "cpu", "--iterations", str(job["iteration"]),
+               "--eval", "--data_device", "cuda", "--iterations", str(job["iteration"]),
                "--save_iterations", str(job["iteration"]), "--test_iterations", "-1", "--quiet"]
     outdoor = job["dataset"] == "tanks_and_temples" or (job["dataset"] == "mipnerf360" and job["scene"] in {"bicycle", "flowers", "garden", "stump", "treehill"})
     if method in {"3dgs", "nexels"}:

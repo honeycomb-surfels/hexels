@@ -95,7 +95,9 @@
     "warmup_passes": 2,
     "timed_passes": 10,
     "timing_trials": 4,
-    "resource_sample_seconds": 0.2,
+    "resource_sample_seconds": 0.005,
+    "training_memory_policy": "cpu_rgb_only_no_nexels_validation_vgg",
+    "evaluation_resource_sample_seconds": 0.2,
     "average_vram": "time_weighted_process_tree_bytes_by_phase",
     "model_storage_units": "decimal_MB",
     "store_test_renders": true

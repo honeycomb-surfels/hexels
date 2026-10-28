@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 
 from scripts.nvs_campaign import CONFIG, ROOT, cameras
+from scripts.measure_command import DEFAULT_SAMPLE_INTERVAL_SECONDS
 from scripts.prepare_minimum_3d_benchmark import SceneSpec, _hexels_stage_commands, _two_dgs_commands
 from scripts.run_paper_3d_benchmark import _write_manifest
 from scripts.run_reproduction import set_option
@@ -28,7 +29,7 @@ def training_command(job: dict, config: dict, smoke: bool) -> tuple[list[str], P
             primitive_cap=None, port=0, dtu_official_root=None, dtu_dataset_root=ROOT / "data/dtu",
             python_bin=PYTHON, seed=job["seed"])[0]
         for name, value in {"-m": job["model_path"], "--iterations": job["iteration"],
-                            "--save_iterations": job["iteration"]}.items():
+                            "--save_iterations": job["iteration"], "--data_device": "cuda"}.items():
             set_option(command, name, value)
         return command, ROOT / "2d-gaussian-splatting"
     if job["method"] != "hexels":
@@ -57,10 +58,14 @@ def training_command(job: dict, config: dict, smoke: bool) -> tuple[list[str], P
     return command, ROOT
 
 
-def wrapped(command: list[str], cwd: Path, output: Path, provenance: Path | None = None) -> list[str]:
+def wrapped(command: list[str], cwd: Path, output: Path, provenance: Path | None = None,
+            *, training_method: str | None = None,
+            interval: float = DEFAULT_SAMPLE_INTERVAL_SECONDS) -> list[str]:
     options = ["--provenance", str(provenance)] if provenance else []
+    if training_method is not None:
+        options.extend(["--training-method", training_method])
     return [str(PYTHON), str(ROOT / "scripts/measure_command.py"), "--output", str(output),
-            "--cwd", str(cwd), *options, "--", *command]
+            "--cwd", str(cwd), "--interval", str(interval), *options, "--", *command]
 
 
 def prepare(output: Path, config: dict, scenes: list[str], methods: list[str],
@@ -108,8 +113,10 @@ def prepare(output: Path, config: dict, scenes: list[str], methods: list[str],
             interpreter = str(PYTHON) if method in {"hexels", "2dgs"} else str(environment_prefix(method) / "bin/python")
             evaluate = [interpreter, "-m", "scripts.evaluate_nvs_campaign", "evaluate", "--job", str(job_path)]
             jobs.append({"dataset": dataset, "scene": scene, "method": arm, "status": "ready", "cwd": str(ROOT),
-                         "commands": [wrapped(command, cwd, run / "resources_training.json"),
-                                      wrapped(evaluate, ROOT, run / "resources_evaluation.json")],
+                         "commands": [wrapped(command, cwd, run / "resources_training.json", training_method=method,
+                                              interval=config["measurement"]["resource_sample_seconds"]),
+                                      wrapped(evaluate, ROOT, run / "resources_evaluation.json",
+                                              interval=config["measurement"].get("evaluation_resource_sample_seconds", 0.2))],
                          "command_stages": ["train", "evaluate_and_video"], "result": job["result"]})
     _write_manifest(output / "manifests/cameras.json", {"jobs": camera_jobs, "job_count": len(camera_jobs)})
     _write_manifest(output / "manifests/smoke.json", {"jobs": jobs, "job_count": len(jobs)})

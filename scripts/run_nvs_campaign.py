@@ -66,8 +66,10 @@ def prepare(output: Path, config: dict, methods: list[str], gates: list[Path]) -
         evaluate = [str(interpreter), "-m", "scripts.evaluate_nvs_campaign", "evaluate", "--job", str(specification)]
         jobs.append({"dataset": run["dataset"], "scene": run["scene"], "method": f"{run['arm']}_seed{run['seed']}",
                      "status": "ready", "cwd": str(ROOT), "result": job["result"],
-                     "commands": [wrapped(command, cwd, directory / "resources_training.json", output / "provenance/provenance.json"),
-                                  wrapped(evaluate, ROOT, directory / "resources_evaluation.json", output / "provenance/provenance.json")],
+                     "commands": [wrapped(command, cwd, directory / "resources_training.json", output / "provenance/provenance.json",
+                                          training_method=method, interval=config["measurement"]["resource_sample_seconds"]),
+                                  wrapped(evaluate, ROOT, directory / "resources_evaluation.json", output / "provenance/provenance.json",
+                                          interval=config["measurement"].get("evaluation_resource_sample_seconds", 0.2))],
                      "command_stages": ["train", "evaluate_and_video"]})
     _write_manifest(output / "manifests/cameras.json", {"jobs": camera_jobs, "job_count": len(camera_jobs)})
     _write_manifest(output / "manifests/jobs.json", {"jobs": jobs, "job_count": len(jobs)})
@@ -103,7 +105,7 @@ def capture(output: Path) -> None:
     capture_source(destination)
     path = destination / "provenance.json"
     record = json.loads(path.read_text())
-    runtime_scripts = {"scripts/measure_command.py", "scripts/evaluate_nvs_campaign.py",
+    runtime_scripts = {"scripts/measure_command.py", "scripts/training_memory_policy.py", "scripts/evaluate_nvs_campaign.py",
         "scripts/evaluate_paper_nvs.py", "scripts/nvs_trajectory.py",
         "scripts/run_minimum_3d_benchmark.py", "scripts/run_benchmark_array.sh",
         "scripts/nvs_camera_validation.py", "scripts/nvs_budgets.py", "scripts/nvs_external.py",
