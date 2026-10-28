@@ -1,0 +1,12 @@
+{
+  "url": "https://github.com/NYU-ICL/image-gs",
+  "revision": "03088368d42684fb54225c981cfd94b58cc0393a",
+  "patch": null,
+  "patch_sha256": null,
+  "licenses": [
+    "LICENSE"
+  ],
+  "research_noncommercial_components": false,
+  "submodule_patches": [],
+  "modified_python_files": []
+}

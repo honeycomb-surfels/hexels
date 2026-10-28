@@ -1,0 +1,65 @@
+{
+  "python": ".envs/hexels311/bin/python",
+  "seed": 0,
+  "hexels": {
+    "camera_sampling": "random",
+    "init_scale_mode": "knn",
+    "init_knn_scale_multiplier": 0.25,
+    "spatial_lr_scale": false,
+    "lr_means3d_final": 0.0
+  },
+  "datasets": {
+    "tanks_and_temples": {
+      "root": "data/tanks_and_temples",
+      "official_root": "data/tnt_official",
+      "evaluation_python": ".envs/tnt-eval/bin/python",
+      "task": "geometry",
+      "scenes": [
+        "Barn",
+        "Caterpillar",
+        "Courthouse",
+        "Ignatius",
+        "Meetingroom",
+        "Truck"
+      ],
+      "resolution": 2
+    },
+    "mipnerf360": {
+      "root": "data/mipnerf360",
+      "resolution": -1,
+      "scenes": [
+        "bicycle",
+        "flowers",
+        "garden",
+        "stump",
+        "treehill",
+        "room",
+        "counter",
+        "kitchen",
+        "bonsai"
+      ]
+    },
+    "dtu": {
+      "root": "data/dtu",
+      "official_root": "data/dtu_official",
+      "resolution": 2,
+      "scenes": [
+        "scan24",
+        "scan37",
+        "scan40",
+        "scan55",
+        "scan63",
+        "scan65",
+        "scan69",
+        "scan83",
+        "scan97",
+        "scan105",
+        "scan106",
+        "scan110",
+        "scan114",
+        "scan118",
+        "scan122"
+      ]
+    }
+  }
+}

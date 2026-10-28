@@ -1,0 +1,5 @@
+name: hexels-colmap
+channels:
+  - conda-forge
+dependencies:
+  - colmap=3.7=gpuha53b2e8_107

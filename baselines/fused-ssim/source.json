@@ -1,0 +1,12 @@
+{
+  "url": "https://github.com/rahul-goel/fused-ssim.git",
+  "revision": "1272e21a282342e89537159e4bad508b19b34157",
+  "patch": null,
+  "patch_sha256": null,
+  "licenses": [
+    "LICENSE"
+  ],
+  "research_noncommercial_components": false,
+  "submodule_patches": [],
+  "modified_python_files": []
+}

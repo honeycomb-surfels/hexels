@@ -1,0 +1,6 @@
+[submodule "hexel-kernel"]
+	path = submodules/hexel-kernel
+	url = https://github.com/honeycomb-surfels/hexel-kernel.git
+[submodule "hexel-viewer"]
+	path = submodules/hexel-viewer
+	url = https://github.com/honeycomb-surfels/hexel-viewer.git

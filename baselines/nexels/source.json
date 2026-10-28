@@ -1,0 +1,17 @@
+{
+  "url": "https://github.com/victor-rong/nexels",
+  "revision": "e975afad5b301b843a75f3a60f234aea4406aa77",
+  "patch": "adaptations.patch",
+  "patch_sha256": "66453a22d68ee9dbe5f23093dcb389d3f00e69f2492e36d3dbd81a8de8f6324e",
+  "licenses": [
+    "LICENSE.md"
+  ],
+  "research_noncommercial_components": true,
+  "submodule_patches": [],
+  "modified_python_files": [
+    "arguments/__init__.py",
+    "render.py",
+    "scene/cameras.py",
+    "utils/camera_utils.py"
+  ]
+}

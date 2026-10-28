@@ -1,0 +1,18 @@
+{
+  "url": "https://github.com/convexsplatting/convex-splatting",
+  "revision": "27f83f8b6fbeecef98530e6b56dbd76b73760685",
+  "patch": "adaptations.patch",
+  "patch_sha256": "034d0cab3fbbd92302b97dbc855becf175789e8e05f0b93cad04b5fc663c86cd",
+  "licenses": [
+    "LICENSE.md",
+    "LICENSE_GS.md"
+  ],
+  "research_noncommercial_components": true,
+  "submodule_patches": [],
+  "modified_python_files": [
+    "arguments/__init__.py",
+    "scene/convex_model.py",
+    "train.py",
+    "utils/camera_utils.py"
+  ]
+}

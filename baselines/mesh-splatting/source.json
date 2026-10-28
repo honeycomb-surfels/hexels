@@ -1,0 +1,20 @@
+{
+  "url": "https://github.com/meshsplatting/mesh-splatting",
+  "revision": "2a810a6c353215685307da3d4cc6ebd73b1c387b",
+  "patch": "adaptations.patch",
+  "patch_sha256": "67b2cdc862b9f6e60f38f819888966b85cd08f5fd7f9e2b68bf85e901ed88893",
+  "licenses": [
+    "LICENSE.md",
+    "LICENSE_GS.md"
+  ],
+  "research_noncommercial_components": true,
+  "submodule_patches": [],
+  "modified_python_files": [
+    "arguments/__init__.py",
+    "scene/__init__.py",
+    "scene/triangle_model.py",
+    "train.py",
+    "utils/camera_utils.py",
+    "utils/memory_control.py"
+  ]
+}

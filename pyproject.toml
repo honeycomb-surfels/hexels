@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hexels"
+version = "0.1.0"
+description = "Honeycomb Surfels: Hexel training, evaluation and extraction"
+requires-python = ">=3.11"
+dependencies = [
+  "torch>=2.5.1", "torchvision", "numpy<2", "scipy", "pillow", "plyfile",
+  "typed-argument-parser", "tqdm", "pyyaml", "imageio", "imageio-ffmpeg", "lpips",
+  "psutil", "scikit-learn", "open3d",
+  # Imported by the fetched Image-GS model and utilities for 2D image fitting.
+  "opencv-python", "scikit-image", "matplotlib", "pytorch-msssim", "flip-evaluator",
+]
+
+[tool.setuptools]
+py-modules = ["gsplat_hexels"]
+
+[tool.setuptools.packages.find]
+include = ["hexels*", "scripts*"]
+
+[tool.setuptools.package-data]
+scripts = ["*.cu", "*.sh"]

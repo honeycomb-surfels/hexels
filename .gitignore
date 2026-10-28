@@ -218,3 +218,30 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local release builds and experiment artifacts
+build/
+dist/
+*.egg-info/
+*.so
+__pycache__/
+.pytest_cache/
+
+/data
+/.envs
+/.venv
+/benchmark_outputs
+/outputs/
+/checkpoints/
+/pretrained/
+/image-gs
+/2d-gaussian-splatting
+/gaussian-splatting
+/convex-splatting
+/triangle-splatting
+/BBSplat
+/nexels
+/mesh-splatting
+/MILo
+/SAD
+/fused-ssim

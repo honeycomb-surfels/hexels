@@ -1,0 +1,13 @@
+{
+  "url": "https://github.com/david-svitov/BBSplat",
+  "revision": "cff8d6a7bce27c56b6938482dbdc72b882cd53bb",
+  "patch": null,
+  "patch_sha256": null,
+  "licenses": [
+    "LICENSE.md",
+    "LICENSE_BBSplat.txt"
+  ],
+  "research_noncommercial_components": true,
+  "submodule_patches": [],
+  "modified_python_files": []
+}

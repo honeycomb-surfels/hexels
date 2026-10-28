@@ -1,0 +1,121 @@
+diff --git a/arguments/__init__.py b/arguments/__init__.py
+--- a/arguments/__init__.py
++++ b/arguments/__init__.py
+@@ -1,3 +1,4 @@
++# Modified for the Hexels release: shared protocols and capacity/evaluation adapters.
+ #
+ # Copyright (C) 2023, Inria
+ # GRAPHDECO research group, https://team.inria.fr/graphdeco
+@@ -54,6 +55,7 @@
+         self._depths = ""
+         self._resolution = -1
+         self._white_background = False
++        self.preserve_rgb_background = False
+         self.train_test_exp = False
+         self.data_device = "cuda"
+         self.num_initial_points = -1
+diff --git a/render.py b/render.py
+--- a/render.py
++++ b/render.py
+@@ -1,3 +1,4 @@
++# Modified for the Hexels release: shared protocols and capacity/evaluation adapters.
+ #
+ # Copyright (C) 2023, Inria
+ # GRAPHDECO research group, https://team.inria.fr/graphdeco
+@@ -63,11 +64,6 @@
+ 
+         if render_gt:
+             gt = view.original_image[0:3, :, :]
+-            gt_image = view.original_image.cuda()
+-
+-            if view.alpha_mask is not None:
+-                alpha_mask = view.alpha_mask.cuda()
+-                gt = alpha_mask * gt + (1 - alpha_mask) * background[:,None,None]
+             torchvision.utils.save_image(gt, os.path.join(gts_path, '{0:05d}'.format(idx) + ".png"))
+ 
+         torchvision.utils.save_image(rendering, os.path.join(render_path, '{0:05d}'.format(idx) + ".png"))
+@@ -129,4 +125,4 @@
+     render_sets(
+         model.extract(args), args.iteration, pipeline.extract(args), nexel_params.extract(args),
+         args.skip_train, args.skip_test, args.skip_ellipse, args.override_settings
+-    )
+\ No newline at end of file
++    )
+diff --git a/scene/cameras.py b/scene/cameras.py
+--- a/scene/cameras.py
++++ b/scene/cameras.py
+@@ -1,3 +1,4 @@
++# Modified for the Hexels release: shared protocols and capacity/evaluation adapters.
+ #
+ # Copyright (C) 2023, Inria
+ # GRAPHDECO research group, https://team.inria.fr/graphdeco
+@@ -20,7 +21,8 @@
+     def __init__(self, resolution, colmap_id, R, T, FoVx, FoVy, depth_params, image, invdepthmap,
+                  image_name, uid,
+                  trans=np.array([0.0, 0.0, 0.0]), scale=1.0, data_device = "cuda",
+-                 train_test_exp = False, is_test_dataset = False, is_test_view = False
++                 train_test_exp = False, is_test_dataset = False, is_test_view = False,
++                 preserve_rgb_background = False
+                  ):
+         super(Camera, self).__init__()
+ 
+@@ -39,13 +41,22 @@
+             print(f"[Warning] Custom device {data_device} failed, fallback to default cuda device" )
+             self.data_device = torch.device("cuda")
+ 
+-        resized_image_rgb = PILtoTorch(image, resolution)
++        channels = image.split()
++        if len(channels) > 3:
++            resized_image_rgb = torch.cat(
++                [PILtoTorch(channel, resolution) for channel in channels[:3]],
++                dim=0,
++            )
++            alpha = PILtoTorch(channels[3], resolution).to(self.data_device)
++            self.alpha_mask = (
++                torch.ones_like(alpha) if preserve_rgb_background else alpha
++            )
++        else:
++            resized_image_rgb = PILtoTorch(image, resolution)
++            self.alpha_mask = torch.ones_like(
++                resized_image_rgb[0:1, ...].to(self.data_device)
++            )
+         gt_image = resized_image_rgb[:3, ...]
+-        self.alpha_mask = None
+-        if resized_image_rgb.shape[0] == 4:
+-            self.alpha_mask = resized_image_rgb[3:4, ...].to(self.data_device)
+-        else: 
+-            self.alpha_mask = torch.ones_like(resized_image_rgb[0:1, ...].to(self.data_device))
+ 
+         if train_test_exp and is_test_view:
+             if is_test_dataset:
+@@ -102,4 +113,3 @@
+         self.k_matrix = getIntrinsicsMatrix(self.FoVx, self.FoVy, self.image_width, self.image_height).cuda()
+         view_inv = torch.inverse(self.world_view_transform)
+         self.camera_center = view_inv[3][:3]
+-
+diff --git a/utils/camera_utils.py b/utils/camera_utils.py
+--- a/utils/camera_utils.py
++++ b/utils/camera_utils.py
+@@ -1,3 +1,4 @@
++# Modified for the Hexels release: shared protocols and capacity/evaluation adapters.
+ #
+ # Copyright (C) 2023, Inria
+ # GRAPHDECO research group, https://team.inria.fr/graphdeco
+@@ -64,7 +65,9 @@
+                   FoVx=cam_info.FovX, FoVy=cam_info.FovY, depth_params=cam_info.depth_params,
+                   image=image, invdepthmap=invdepthmap,
+                   image_name=cam_info.image_name, uid=id, data_device=args.data_device,
+-                  train_test_exp=args.train_test_exp, is_test_dataset=is_test_dataset, is_test_view=cam_info.is_test)
++                  train_test_exp=args.train_test_exp, is_test_dataset=is_test_dataset,
++                  is_test_view=cam_info.is_test,
++                  preserve_rgb_background=args.preserve_rgb_background)
+ 
+ def cameraList_from_camInfos(cam_infos, resolution_scale, args, is_nerf_synthetic, is_test_dataset):
+     camera_list = []
+@@ -94,4 +97,4 @@
+         'fy' : fov2focal(camera.FovY, camera.height),
+         'fx' : fov2focal(camera.FovX, camera.width)
+     }
+-    return camera_entry
+\ No newline at end of file
++    return camera_entry

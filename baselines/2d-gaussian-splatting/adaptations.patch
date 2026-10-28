@@ -1,0 +1,794 @@
+diff --git a/arguments/__init__.py b/arguments/__init__.py
+--- a/arguments/__init__.py
++++ b/arguments/__init__.py
+@@ -1,3 +1,4 @@
++# Modified for the Hexels release: shared protocols and capacity/evaluation adapters.
+ #
+ # Copyright (C) 2023, Inria
+ # GRAPHDECO research group, https://team.inria.fr/graphdeco
+@@ -54,6 +55,8 @@
+         self._white_background = False
+         self.data_device = "cuda"
+         self.eval = False
++        self.train_camera_manifest = ""
++        self.init_geometry_path = ""
+         self.render_items = ['RGB', 'Alpha', 'Normal', 'Depth', 'Edge', 'Curvature']
+         super().__init__(parser, "Loading Parameters", sentinel)
+ 
+@@ -92,6 +95,7 @@
+         self.densify_from_iter = 500
+         self.densify_until_iter = 15_000
+         self.densify_grad_threshold = 0.0002
++        self.max_primitives = -1
+         super().__init__(parser, "Optimization Parameters")
+ 
+ def get_combined_args(parser : ArgumentParser):
+diff --git a/render.py b/render.py
+--- a/render.py
++++ b/render.py
+@@ -1,3 +1,4 @@
++# Modified for the Hexels release: shared protocols and capacity/evaluation adapters.
+ #
+ # Copyright (C) 2023, Inria
+ # GRAPHDECO research group, https://team.inria.fr/graphdeco
+@@ -10,6 +11,8 @@
+ #
+ 
+ import torch
++import json
++import time
+ from scene import Scene
+ import os
+ from tqdm import tqdm
+@@ -34,6 +37,7 @@
+     parser.add_argument("--skip_train", action="store_true")
+     parser.add_argument("--skip_test", action="store_true")
+     parser.add_argument("--skip_mesh", action="store_true")
++    parser.add_argument("--output_model_path", default=None, type=str)
+     parser.add_argument("--quiet", action="store_true")
+     parser.add_argument("--render_path", action="store_true")
+     parser.add_argument("--voxel_size", default=-1.0, type=float, help='Mesh: voxel size for TSDF')
+@@ -42,19 +46,25 @@
+     parser.add_argument("--num_cluster", default=50, type=int, help='Mesh: number of connected clusters to export')
+     parser.add_argument("--unbounded", action="store_true", help='Mesh: using unbounded mode for meshing')
+     parser.add_argument("--mesh_res", default=1024, type=int, help='Mesh: resolution for unbounded mesh extraction')
++    parser.add_argument("--traj_frames", type=int, default=240, help="Trajectory: number of frames when --render_path is set.")
++    parser.add_argument("--traj_fps", type=float, default=60.0, help="Trajectory: FPS for encoded videos when --render_path is set.")
+     args = get_combined_args(parser)
+     print("Rendering " + args.model_path)
+ 
+ 
++    load_started = time.perf_counter()
+     dataset, iteration, pipe = model.extract(args), args.iteration, pipeline.extract(args)
+     gaussians = GaussianModel(dataset.sh_degree)
+     scene = Scene(dataset, gaussians, load_iteration=iteration, shuffle=False)
+     bg_color = [1,1,1] if dataset.white_background else [0, 0, 0]
+     background = torch.tensor(bg_color, dtype=torch.float32, device="cuda")
+     
+-    train_dir = os.path.join(args.model_path, 'train', "ours_{}".format(scene.loaded_iter))
+-    test_dir = os.path.join(args.model_path, 'test', "ours_{}".format(scene.loaded_iter))
++    destination = getattr(args, "output_model_path", None) or args.model_path
++    train_dir = os.path.join(destination, 'train', "ours_{}".format(scene.loaded_iter))
++    test_dir = os.path.join(destination, 'test', "ours_{}".format(scene.loaded_iter))
+     gaussExtractor = GaussianExtractor(gaussians, render, pipe, bg_color=bg_color)    
++    torch.cuda.synchronize()
++    load_seconds = time.perf_counter() - load_started
+     
+     if not args.skip_train:
+         print("export training images ...")
+@@ -74,21 +84,30 @@
+         print("render videos ...")
+         traj_dir = os.path.join(args.model_path, 'traj', "ours_{}".format(scene.loaded_iter))
+         os.makedirs(traj_dir, exist_ok=True)
+-        n_fames = 240
+-        cam_traj = generate_path(scene.getTrainCameras(), n_frames=n_fames)
++        n_frames = args.traj_frames
++        cam_traj = generate_path(scene.getTrainCameras(), n_frames=n_frames)
+         gaussExtractor.reconstruction(cam_traj)
+         gaussExtractor.export_image(traj_dir)
+         create_videos(base_dir=traj_dir,
+                     input_dir=traj_dir, 
+                     out_name='render_traj', 
+-                    num_frames=n_fames)
++                    num_frames=n_frames,
++                    fps=args.traj_fps,
++                    codec="h264",
++                    encoded_format="yuv420p")
+ 
+     if not args.skip_mesh:
++        torch.cuda.synchronize()
++        torch.cuda.reset_peak_memory_stats()
++        mesh_started = time.perf_counter()
+         print("export mesh ...")
+         os.makedirs(train_dir, exist_ok=True)
+         # set the active_sh to 0 to export only diffuse texture
+         gaussExtractor.gaussians.active_sh_degree = 0
+         gaussExtractor.reconstruction(scene.getTrainCameras())
++        torch.cuda.synchronize()
++        render_seconds = time.perf_counter() - mesh_started
++        fusion_started = time.perf_counter()
+         # extract the mesh and save
+         if args.unbounded:
+             name = 'fuse_unbounded.ply'
+@@ -100,9 +119,30 @@
+             sdf_trunc = 5.0 * voxel_size if args.sdf_trunc < 0 else args.sdf_trunc
+             mesh = gaussExtractor.extract_mesh_bounded(voxel_size=voxel_size, sdf_trunc=sdf_trunc, depth_trunc=depth_trunc)
+         
++        torch.cuda.synchronize()
++        fusion_seconds = time.perf_counter() - fusion_started
++        write_started = time.perf_counter()
+         o3d.io.write_triangle_mesh(os.path.join(train_dir, name), mesh)
++        write_seconds = time.perf_counter() - write_started
+         print("mesh saved at {}".format(os.path.join(train_dir, name)))
+         # post-process the mesh and save, saving the largest N clusters
++        post_started = time.perf_counter()
+         mesh_post = post_process_mesh(mesh, cluster_to_keep=args.num_cluster)
++        post_seconds = time.perf_counter() - post_started
++        write_started = time.perf_counter()
+         o3d.io.write_triangle_mesh(os.path.join(train_dir, name.replace('.ply', '_post.ply')), mesh_post)
+-        print("mesh post processed saved at {}".format(os.path.join(train_dir, name.replace('.ply', '_post.ply'))))
+\ No newline at end of file
++        write_seconds += time.perf_counter() - write_started
++        print("mesh post processed saved at {}".format(os.path.join(train_dir, name.replace('.ply', '_post.ply'))))
++        extraction_seconds = time.perf_counter() - mesh_started
++        telemetry = {
++            "load_seconds": load_seconds, "render_seconds": render_seconds,
++            "fusion_polygonization_seconds": fusion_seconds, "postprocess_seconds": post_seconds,
++            "write_seconds": write_seconds, "extraction_seconds": extraction_seconds,
++            "total_seconds": load_seconds + extraction_seconds,
++            "vertices": len(mesh_post.vertices), "triangles": len(mesh_post.triangles),
++            "primitives": len(gaussians.get_xyz), "views": len(scene.getTrainCameras()),
++            "peak_cuda_allocated_bytes": torch.cuda.max_memory_allocated(),
++            "gpu": torch.cuda.get_device_name(), "preview_exports_in_mesh_timing": False,
++        }
++        with open(os.path.join(train_dir, "extraction.json"), "w") as stream:
++            json.dump(telemetry, stream, indent=2)
+diff --git a/scene/__init__.py b/scene/__init__.py
+--- a/scene/__init__.py
++++ b/scene/__init__.py
+@@ -1,3 +1,4 @@
++# Modified for the Hexels release: shared protocols and capacity/evaluation adapters.
+ #
+ # Copyright (C) 2023, Inria
+ # GRAPHDECO research group, https://team.inria.fr/graphdeco
+@@ -79,6 +80,10 @@
+                                                            "point_cloud",
+                                                            "iteration_" + str(self.loaded_iter),
+                                                            "point_cloud.ply"))
++        elif getattr(args, "init_geometry_path", ""):
++            self.gaussians.create_from_geometry(args.init_geometry_path, self.cameras_extent)
++            with open(os.path.join(self.model_path, "initial_geometry.json"), "w") as stream:
++                json.dump(self.gaussians.initial_geometry, stream, indent=2)
+         else:
+             self.gaussians.create_from_pcd(scene_info.point_cloud, self.cameras_extent)
+ 
+@@ -90,4 +95,4 @@
+         return self.train_cameras[scale]
+ 
+     def getTestCameras(self, scale=1.0):
+-        return self.test_cameras[scale]
+\ No newline at end of file
++        return self.test_cameras[scale]
+diff --git a/scene/gaussian_model.py b/scene/gaussian_model.py
+--- a/scene/gaussian_model.py
++++ b/scene/gaussian_model.py
+@@ -1,3 +1,4 @@
++# Modified for the Hexels release: shared protocols and capacity/evaluation adapters.
+ #
+ # Copyright (C) 2023, Inria
+ # GRAPHDECO research group, https://team.inria.fr/graphdeco
+@@ -145,6 +146,18 @@
+         self._opacity = nn.Parameter(opacities.requires_grad_(True))
+         self.max_radii2D = torch.zeros((self.get_xyz.shape[0]), device="cuda")
+ 
++    def create_from_geometry(self, path: str, spatial_lr_scale: float) -> None:
++        """Share MVS centers, RGB and tangent frames while retaining native disk scales."""
++        from hexels.initial_geometry import load_initial_geometry
++
++        geometry, metadata = load_initial_geometry(path, torch.device("cpu"))
++        points = geometry["means3d"].numpy()
++        self.create_from_pcd(BasicPointCloud(points=points, colors=geometry["colors"].numpy(),
++                                           normals=np.zeros_like(points)), spatial_lr_scale)
++        with torch.no_grad():
++            self._rotation.copy_(geometry["rotations"].to(self._rotation.device))
++        self.initial_geometry = metadata
++
+     def training_setup(self, training_args):
+         self.percent_dense = training_args.percent_dense
+         self.xyz_gradient_accum = torch.zeros((self.get_xyz.shape[0], 1), device="cuda")
+@@ -303,6 +316,22 @@
+         self.denom = self.denom[valid_points_mask]
+         self.max_radii2D = self.max_radii2D[valid_points_mask]
+ 
++    def enforce_primitive_budget(self, max_primitives: int) -> None:
++        if max_primitives <= 0 or self.get_xyz.shape[0] <= max_primitives:
++            return
++        keep = torch.topk(
++            self.get_opacity.squeeze(-1),
++            max_primitives,
++            sorted=False,
++        ).indices
++        prune_mask = torch.ones(
++            self.get_xyz.shape[0],
++            dtype=torch.bool,
++            device=self.get_xyz.device,
++        )
++        prune_mask[keep] = False
++        self.prune_points(prune_mask)
++
+     def cat_tensors_to_optimizer(self, tensors_dict):
+         optimizable_tensors = {}
+         for group in self.optimizer.param_groups:
+@@ -404,4 +433,4 @@
+ 
+     def add_densification_stats(self, viewspace_point_tensor, update_filter):
+         self.xyz_gradient_accum[update_filter] += torch.norm(viewspace_point_tensor.grad[update_filter], dim=-1, keepdim=True)
+-        self.denom[update_filter] += 1
+\ No newline at end of file
++        self.denom[update_filter] += 1
+diff --git a/scripts/eval_dtu/eval.py b/scripts/eval_dtu/eval.py
+--- a/scripts/eval_dtu/eval.py
++++ b/scripts/eval_dtu/eval.py
+@@ -1,3 +1,4 @@
++# Modified for the Hexels release: shared protocols and capacity/evaluation adapters.
+ # adapted from https://github.com/jzhangbs/DTUeval-python
+ import numpy as np
+ import open3d as o3d
+@@ -6,6 +7,7 @@
+ from scipy.io import loadmat
+ import multiprocessing as mp
+ import argparse
++import os
+ 
+ def sample_single_tri(input_):
+     n1, n2, v1, v2, tri_vert = input_
+@@ -17,6 +19,22 @@
+     k = c[c.sum(axis=-1) < 1]  # m2
+     q = v1 * k[:,:1] + v2 * k[:,1:] + tri_vert
+     return q
++
++def radius_suppression_mask(points: np.ndarray, radius: float, batch_size: int = 256) -> np.ndarray:
++    """Preserve DTU's greedy order without retaining every radius neighborhood."""
++    tree = skln.KDTree(points, leaf_size=30, metric='euclidean')
++    mask = np.ones(len(points), dtype=np.bool_)
++    for start in range(0, len(points), batch_size):
++        candidates = np.flatnonzero(mask[start:start + batch_size]) + start
++        if not len(candidates):
++            continue
++        neighborhoods = tree.query_radius(points[candidates], r=radius)
++        for current, neighbors in zip(candidates, neighborhoods):
++            if mask[current]:
++                mask[neighbors] = False
++                mask[current] = True
++    return mask
++
+ 
+ def write_vis_pcd(file, points, colors):
+     pcd = o3d.geometry.PointCloud()
+@@ -37,6 +55,8 @@
+     parser.add_argument('--patch_size', type=float, default=60)
+     parser.add_argument('--max_dist', type=float, default=20)
+     parser.add_argument('--visualize_threshold', type=float, default=10)
++    parser.add_argument('--workers', type=int, default=int(os.environ.get('SLURM_CPUS_PER_TASK', os.cpu_count())))
++    parser.add_argument('--seed', type=int, default=0)
+     args = parser.parse_args()
+ 
+     thresh = args.downsample_density
+@@ -64,7 +84,7 @@
+         n1 = np.floor(l1 / thr)
+         n2 = np.floor(l2 / thr)
+ 
+-        with mp.Pool() as mp_pool:
++        with mp.Pool(processes=args.workers) as mp_pool:
+             new_pts = mp_pool.map(sample_single_tri, ((n1[i,0], n2[i,0], v1[i:i+1], v2[i:i+1], tri_vert[i:i+1,0]) for i in range(len(n1))), chunksize=1024)
+ 
+         new_pts = np.concatenate(new_pts, axis=0)
+@@ -78,19 +98,13 @@
+ 
+     pbar.update(1)
+     pbar.set_description('random shuffle pcd index')
+-    shuffle_rng = np.random.default_rng()
++    shuffle_rng = np.random.default_rng(args.seed)
+     shuffle_rng.shuffle(data_pcd, axis=0)
+ 
+     pbar.update(1)
+     pbar.set_description('downsample pcd')
+-    nn_engine = skln.NearestNeighbors(n_neighbors=1, radius=thresh, algorithm='kd_tree', n_jobs=-1)
+-    nn_engine.fit(data_pcd)
+-    rnn_idxs = nn_engine.radius_neighbors(data_pcd, radius=thresh, return_distance=False)
+-    mask = np.ones(data_pcd.shape[0], dtype=np.bool_)
+-    for curr, idxs in enumerate(rnn_idxs):
+-        if mask[curr]:
+-            mask[idxs] = 0
+-            mask[curr] = 1
++    nn_engine = skln.NearestNeighbors(n_neighbors=1, radius=thresh, algorithm='kd_tree', n_jobs=args.workers)
++    mask = radius_suppression_mask(data_pcd, thresh)
+     data_down = data_pcd[mask]
+ 
+     pbar.update(1)
+@@ -163,4 +177,4 @@
+             'mean_d2s': mean_d2s,
+             'mean_s2d': mean_s2d,
+             'overall': over_all,
+-        }, fp, indent=True)
+\ No newline at end of file
++        }, fp, indent=True)
+diff --git a/scripts/eval_dtu/evaluate_single_scene.py b/scripts/eval_dtu/evaluate_single_scene.py
+--- a/scripts/eval_dtu/evaluate_single_scene.py
++++ b/scripts/eval_dtu/evaluate_single_scene.py
+@@ -1,3 +1,4 @@
++# Modified for the Hexels release: shared protocols and capacity/evaluation adapters.
+ import torch
+ import torch.nn as nn
+ import torch.nn.functional as F
+@@ -124,6 +125,21 @@
+     result_mesh_file = os.path.join(out_dir, "culled_mesh.ply")
+     cull_scan(scan, ply_file, result_mesh_file, instance_dir=os.path.join(args.mask_dir, f'scan{args.scan_id}'))
+ 
+-    script_dir = os.path.dirname(os.path.abspath(__file__))
+-    cmd = f"python {script_dir}/eval.py --data {result_mesh_file} --scan {scan} --mode mesh --dataset_dir {Offical_DTU_Dataset} --vis_out_dir {out_dir}"
+-    os.system(cmd)
+\ No newline at end of file
++    script_dir = Path(__file__).resolve().parent
++    subprocess.run(
++        [
++            sys.executable,
++            str(script_dir / "eval.py"),
++            "--data",
++            result_mesh_file,
++            "--scan",
++            scan,
++            "--mode",
++            "mesh",
++            "--dataset_dir",
++            Offical_DTU_Dataset,
++            "--vis_out_dir",
++            out_dir,
++        ],
++        check=True,
++    )
+diff --git a/scripts/eval_tnt/evaluation.py b/scripts/eval_tnt/evaluation.py
+--- a/scripts/eval_tnt/evaluation.py
++++ b/scripts/eval_tnt/evaluation.py
+@@ -1,3 +1,4 @@
++# Modified for the Hexels release: shared protocols and capacity/evaluation adapters.
+ # ----------------------------------------------------------------------------
+ # -                   TanksAndTemples Website Toolbox                        -
+ # -                    http://www.tanksandtemples.org                        -
+@@ -81,6 +82,8 @@
+     else:
+         print("No bounding box provided to crop estimated point cloud, leaving it as the loaded version!!")
+     s = s.voxel_down_sample(voxel_size)
++    if not len(s.points):
++        raise ValueError("Reconstruction is empty after evaluation cropping/downsampling")
+     s.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamKNN(knn=20))
+     print(filename_mvs + "/" + scene_name + ".precision.ply")
+ 
+@@ -91,6 +94,8 @@
+         print("No bounding box provided to crop groundtruth point cloud, leaving it as the loaded version!!")
+ 
+     t = t.voxel_down_sample(voxel_size)
++    if not len(t.points):
++        raise ValueError("Ground truth is empty after evaluation cropping/downsampling")
+     t.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamKNN(knn=20))
+     print("[compute_point_cloud_to_point_cloud_distance]")
+     distance1 = s.compute_point_cloud_distance(t)
+@@ -179,12 +184,15 @@
+     print("[get_f1_score_histo2]")
+     dist_threshold = threshold
+     if len(distance1) and len(distance2):
++        for distances in (distance1, distance2):
++            if not np.all(np.isfinite(distances)) or np.any(np.asarray(distances) < 0):
++                raise ValueError("Evaluation distances must be finite and nonnegative")
+ 
+         recall = float(sum(d < threshold for d in distance2)) / float(
+             len(distance2))
+         precision = float(sum(d < threshold for d in distance1)) / float(
+             len(distance1))
+-        fscore = 2 * recall * precision / (recall + precision)
++        fscore = 2 * recall * precision / (recall + precision) if recall + precision else 0.0
+         num = len(distance1)
+         bins = np.arange(0, dist_threshold * plot_stretch, dist_threshold / 100)
+         hist, edges_source = np.histogram(distance1, bins)
+@@ -196,13 +204,7 @@
+         cum_target = np.cumsum(hist).astype(float) / num
+ 
+     else:
+-        precision = 0
+-        recall = 0
+-        fscore = 0
+-        edges_source = np.array([0])
+-        cum_source = np.array([0])
+-        edges_target = np.array([0])
+-        cum_target = np.array([0])
++        raise ValueError("Cannot evaluate F1 with empty source or target distances")
+ 
+     return [
+         precision,
+diff --git a/train.py b/train.py
+--- a/train.py
++++ b/train.py
+@@ -1,3 +1,4 @@
++# Modified for the Hexels release: shared protocols and capacity/evaluation adapters.
+ #
+ # Copyright (C) 2023, Inria
+ # GRAPHDECO research group, https://team.inria.fr/graphdeco
+@@ -9,17 +10,20 @@
+ # For inquiries contact  george.drettakis@inria.fr
+ #
+ 
++import json
+ import os
++import sys
++import time
+ import torch
+ from random import randint
+ from utils.loss_utils import l1_loss, ssim
+ from gaussian_renderer import render, network_gui
+-import sys
+ from scene import Scene, GaussianModel
+ from utils.general_utils import safe_state
+ import uuid
+ from tqdm import tqdm
+ from utils.image_utils import psnr, render_net_image
++from utils.train_camera_manifest import select_train_cameras
+ from argparse import ArgumentParser, Namespace
+ from arguments import ModelParams, PipelineParams, OptimizationParams
+ try:
+@@ -28,15 +32,32 @@
+ except ImportError:
+     TENSORBOARD_FOUND = False
+ 
+-def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoint_iterations, checkpoint):
++MODEL_BYTES_PER_PRIMITIVE = 232
++
++def training(dataset, opt, pipe, testing_iterations, saving_iterations, checkpoint_iterations, checkpoint, training_start):
++    if dataset.train_camera_manifest and checkpoint:
++        raise ValueError("--train_camera_manifest is only supported for fresh training")
+     first_iter = 0
+     tb_writer = prepare_output_and_logger(dataset)
+     gaussians = GaussianModel(dataset.sh_degree)
+     scene = Scene(dataset, gaussians)
++    train_camera_selection = None
++    if dataset.train_camera_manifest:
++        selected, train_camera_selection = select_train_cameras(
++            scene.getTrainCameras(),
++            dataset.train_camera_manifest,
++        )
++        scene.train_cameras[1.0] = selected
++        print(
++            "Training camera manifest: retained={} sha256={}".format(
++                len(selected), train_camera_selection["manifest_sha256"]
++            )
++        )
+     gaussians.training_setup(opt)
+     if checkpoint:
+         (model_params, first_iter) = torch.load(checkpoint)
+         gaussians.restore(model_params, opt)
++    gaussians.enforce_primitive_budget(opt.max_primitives)
+ 
+     bg_color = [1, 1, 1] if dataset.white_background else [0, 0, 0]
+     background = torch.tensor(bg_color, dtype=torch.float32, device="cuda")
+@@ -48,6 +69,7 @@
+     ema_loss_for_log = 0.0
+     ema_dist_for_log = 0.0
+     ema_normal_for_log = 0.0
++    milestone_wall_time_seconds = {}
+ 
+     progress_bar = tqdm(range(first_iter, opt.iterations), desc="Training progress")
+     first_iter += 1
+@@ -120,6 +142,9 @@
+             if (iteration in saving_iterations):
+                 print("\n[ITER {}] Saving Gaussians".format(iteration))
+                 scene.save(iteration)
++                milestone_wall_time_seconds[str(iteration)] = (
++                    time.perf_counter() - training_start
++                )
+ 
+ 
+             # Densification
+@@ -130,6 +155,7 @@
+                 if iteration > opt.densify_from_iter and iteration % opt.densification_interval == 0:
+                     size_threshold = 20 if iteration > opt.opacity_reset_interval else None
+                     gaussians.densify_and_prune(opt.densify_grad_threshold, opt.opacity_cull, scene.cameras_extent, size_threshold)
++                    gaussians.enforce_primitive_budget(opt.max_primitives)
+                 
+                 if iteration % opt.opacity_reset_interval == 0 or (dataset.white_background and iteration == opt.densify_from_iter):
+                     gaussians.reset_opacity()
+@@ -166,6 +192,11 @@
+                 except Exception as e:
+                     # raise e
+                     network_gui.conn = None
++    return (
++        int(gaussians.get_xyz.shape[0]),
++        train_camera_selection,
++        milestone_wall_time_seconds,
++    )
+ 
+ def prepare_output_and_logger(args):    
+     if not args.model_path:
+@@ -261,6 +292,7 @@
+     parser.add_argument("--test_iterations", nargs="+", type=int, default=[7_000, 30_000])
+     parser.add_argument("--save_iterations", nargs="+", type=int, default=[7_000, 30_000])
+     parser.add_argument("--quiet", action="store_true")
++    parser.add_argument("--seed", type=int, default=0)
+     parser.add_argument("--checkpoint_iterations", nargs="+", type=int, default=[])
+     parser.add_argument("--start_checkpoint", type=str, default = None)
+     args = parser.parse_args(sys.argv[1:])
+@@ -269,12 +301,46 @@
+     print("Optimizing " + args.model_path)
+ 
+     # Initialize system state (RNG)
+-    safe_state(args.quiet)
++    safe_state(args.quiet, args.seed)
+ 
+     # Start GUI server, configure and run training
+     network_gui.init(args.ip, args.port)
+     torch.autograd.set_detect_anomaly(args.detect_anomaly)
+-    training(lp.extract(args), op.extract(args), pp.extract(args), args.test_iterations, args.save_iterations, args.checkpoint_iterations, args.start_checkpoint)
++    torch.cuda.reset_peak_memory_stats()
++    training_start = time.perf_counter()
++    final_points, train_camera_selection, milestone_wall_time_seconds = training(
++        lp.extract(args),
++        op.extract(args),
++        pp.extract(args),
++        args.test_iterations,
++        args.save_iterations,
++        args.checkpoint_iterations,
++        args.start_checkpoint,
++        training_start,
++    )
++    torch.cuda.synchronize()
++    telemetry = {
++        "schema_version": 1,
++        "complete": True,
++        "iterations": args.iterations,
++        "seed": args.seed,
++        "final_points": final_points,
++        "model_bytes_per_primitive": MODEL_BYTES_PER_PRIMITIVE,
++        "model_state_bytes": final_points * MODEL_BYTES_PER_PRIMITIVE,
++        "wall_time_seconds": time.perf_counter() - training_start,
++        "milestone_wall_time_seconds": milestone_wall_time_seconds,
++        "peak_cuda_allocated_bytes": torch.cuda.max_memory_allocated(),
++        "peak_cuda_reserved_bytes": torch.cuda.max_memory_reserved(),
++        "torch_version": str(torch.__version__),
++        "cuda_version": str(torch.version.cuda),
++        "device_name": torch.cuda.get_device_name(),
++        "argv": sys.argv,
++    }
++    if train_camera_selection is not None:
++        telemetry["train_camera_selection"] = train_camera_selection
++    with open(os.path.join(args.model_path, "training_telemetry.json"), "x") as telemetry_file:
++        json.dump(telemetry, telemetry_file, indent=2)
++        telemetry_file.write("\n")
+ 
+     # All done
+     print("\nTraining complete.")
+diff --git a/utils/general_utils.py b/utils/general_utils.py
+--- a/utils/general_utils.py
++++ b/utils/general_utils.py
+@@ -1,3 +1,4 @@
++# Modified for the Hexels release: shared protocols and capacity/evaluation adapters.
+ #
+ # Copyright (C) 2023, Inria
+ # GRAPHDECO research group, https://team.inria.fr/graphdeco
+@@ -109,7 +110,7 @@
+     L = R @ L
+     return L
+ 
+-def safe_state(silent):
++def safe_state(silent, seed=0):
+     old_f = sys.stdout
+     class F:
+         def __init__(self, silent):
+@@ -127,9 +128,10 @@
+ 
+     sys.stdout = F(silent)
+ 
+-    random.seed(0)
+-    np.random.seed(0)
+-    torch.manual_seed(0)
++    random.seed(seed)
++    np.random.seed(seed)
++    torch.manual_seed(seed)
++    torch.cuda.manual_seed_all(seed)
+     torch.cuda.set_device(torch.device("cuda:0"))
+ 
+ 
+@@ -170,8 +172,7 @@
+     fig.colorbar(im, ax=ax)
+     fig.tight_layout()
+     fig.canvas.draw()
+-    data = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
+-    data = data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+-    img = torch.from_numpy(data / 255.).float().permute(2,0,1)
+-    plt.close()
+-    return img
+\ No newline at end of file
++    data = np.asarray(fig.canvas.buffer_rgba())[:, :, :3].copy()
++    img = torch.from_numpy(data).float().permute(2, 0, 1) / 255.0
++    plt.close(fig)
++    return img
+diff --git a/utils/image_utils.py b/utils/image_utils.py
+--- a/utils/image_utils.py
++++ b/utils/image_utils.py
+@@ -1,3 +1,4 @@
++# Modified for the Hexels release: shared protocols and capacity/evaluation adapters.
+ #
+ # Copyright (C) 2023, Inria
+ # GRAPHDECO research group, https://team.inria.fr/graphdeco
+@@ -10,7 +11,6 @@
+ #
+ 
+ import torch
+-import matplotlib.pyplot as plt
+ import torch.nn.functional as F
+ 
+ def mse(img1, img2):
+@@ -32,6 +32,8 @@
+     return magnitude
+ 
+ def colormap(map, cmap="turbo"):
++    import matplotlib.pyplot as plt
++
+     colors = torch.tensor(plt.cm.get_cmap(cmap).colors).to(map.device)
+     map = (map - map.min()) / (map.max() - map.min())
+     map = (map * 255).round().long().squeeze()
+@@ -58,4 +60,4 @@
+ 
+     if net_image.shape[0]==1:
+         net_image = colormap(net_image)
+-    return net_image
+\ No newline at end of file
++    return net_image
+diff --git a/utils/point_utils.py b/utils/point_utils.py
+--- a/utils/point_utils.py
++++ b/utils/point_utils.py
+@@ -1,10 +1,5 @@
++# Modified for the Hexels release: shared protocols and capacity/evaluation adapters.
+ import torch
+-import torch.nn as nn
+-import torch.nn.functional as F
+-import numpy as np
+-import os, cv2
+-import matplotlib.pyplot as plt
+-import math
+ 
+ def depths_to_points(view, depthmap):
+     c2w = (view.world_view_transform.T).inverse()
+@@ -34,4 +29,4 @@
+     dy = torch.cat([points[1:-1, 2:] - points[1:-1, :-2]], dim=1)
+     normal_map = torch.nn.functional.normalize(torch.cross(dx, dy, dim=-1), dim=-1)
+     output[1:-1, 1:-1, :] = normal_map
+-    return output
+\ No newline at end of file
++    return output
+diff --git a/utils/render_utils.py b/utils/render_utils.py
+--- a/utils/render_utils.py
++++ b/utils/render_utils.py
+@@ -1,3 +1,4 @@
++# Modified for the Hexels release: shared protocols and capacity/evaluation adapters.
+ # Copyright 2022 Google LLC
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+@@ -200,7 +201,16 @@
+   return image
+ 
+ 
+-def create_videos(base_dir, input_dir, out_name, num_frames=480):
++def create_videos(
++    base_dir: str,
++    input_dir: str,
++    out_name: str,
++    num_frames: int = 480,
++    fps: float = 60.0,
++    *,
++    codec: str = "h264",
++    encoded_format: str | None = None,
++):
+   """Creates videos out of the images saved to disk."""
+   # Last two parts of checkpoint path are experiment name and scene name.
+   video_prefix = f'{out_name}'
+@@ -222,10 +232,12 @@
+ 
+   video_kwargs = {
+       'shape': shape[:2],
+-      'codec': 'h264',
+-      'fps': 60,
++      'codec': codec,
++      'fps': fps,
+       'crf': 18,
+   }
++  if encoded_format is not None:
++    video_kwargs["encoded_format"] = encoded_format
+   
+   for k in ['depth', 'normal', 'color']:
+     video_file = os.path.join(base_dir, f'{video_prefix}_{k}.mp4')
+@@ -278,4 +290,4 @@
+ def save_img_f32(depthmap, pth):
+   """Save an image (probably a depthmap) to disk as a float32 TIFF."""
+   with open(pth, 'wb') as f:
+-    Image.fromarray(np.nan_to_num(depthmap).astype(np.float32)).save(f, 'TIFF')
+\ No newline at end of file
++    Image.fromarray(np.nan_to_num(depthmap).astype(np.float32)).save(f, 'TIFF')
+diff --git a/utils/train_camera_manifest.py b/utils/train_camera_manifest.py
+new file mode 100644
+--- /dev/null
++++ b/utils/train_camera_manifest.py
+@@ -0,0 +1,76 @@
++# Modified for the Hexels release: shared protocols and capacity/evaluation adapters.
++from __future__ import annotations
++
++import hashlib
++import json
++from collections.abc import Mapping
++from pathlib import Path
++
++
++def _json_sha256(value: object) -> str:
++    payload = json.dumps(
++        value,
++        sort_keys=True,
++        separators=(",", ":"),
++        allow_nan=False,
++    ).encode("utf-8")
++    return hashlib.sha256(payload).hexdigest()
++
++
++def select_train_cameras(
++    cameras: list[object],
++    manifest_path: str | Path,
++) -> tuple[list[object], dict[str, object]]:
++    path = Path(manifest_path).resolve()
++    if not path.is_file():
++        raise ValueError(f"Training camera manifest does not exist: {path}")
++    manifest_bytes = path.read_bytes()
++    payload = json.loads(manifest_bytes)
++    registered = isinstance(payload, Mapping)
++    if registered:
++        expected_keys = {"schema_version", "camera_names", "camera_names_sha256"}
++        if set(payload) != expected_keys:
++            raise ValueError(
++                "Registered training camera manifest must contain exactly: "
++                + ", ".join(sorted(expected_keys))
++            )
++        if payload["schema_version"] != 1 or isinstance(payload["schema_version"], bool):
++            raise ValueError("Training camera manifest schema_version must be 1")
++        names = payload["camera_names"]
++    else:
++        names = payload
++    if (
++        not isinstance(names, list)
++        or not names
++        or any(not isinstance(name, str) or not name for name in names)
++    ):
++        raise ValueError("Training camera manifest must contain a non-empty list of camera names")
++    if len(set(names)) != len(names):
++        raise ValueError("Training camera manifest camera names must be unique")
++
++    names_sha256 = _json_sha256(names)
++    if registered and payload["camera_names_sha256"] != names_sha256:
++        raise ValueError("Training camera manifest camera_names_sha256 mismatch")
++
++    named_cameras: dict[str, object] = {}
++    for camera in cameras:
++        name = getattr(camera, "image_name", None)
++        if not isinstance(name, str) or not name:
++            raise ValueError("Every training camera must have a non-empty image_name")
++        if name in named_cameras:
++            raise ValueError("Training camera image_name values must be unique")
++        named_cameras[name] = camera
++    unknown = [name for name in names if name not in named_cameras]
++    if unknown:
++        raise ValueError(
++            "Training camera manifest contains unknown camera names: " + ", ".join(unknown)
++        )
++
++    metadata = {
++        "manifest_path": str(path),
++        "manifest_sha256": hashlib.sha256(manifest_bytes).hexdigest(),
++        "camera_count": len(names),
++        "camera_names": list(names),
++        "camera_names_sha256": names_sha256,
++    }
++    return [named_cameras[name] for name in names], metadata

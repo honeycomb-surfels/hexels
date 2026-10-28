@@ -1,0 +1,18 @@
+{
+  "url": "https://github.com/graphdeco-inria/gaussian-splatting",
+  "revision": "54c035f7834b564019656c3e3fcc3646292f727d",
+  "patch": "adaptations.patch",
+  "patch_sha256": "ac087ae71e7f54116a172b7b4574b2353959c7dccde1d56612771af15ea77dfc",
+  "licenses": [
+    "LICENSE.md"
+  ],
+  "research_noncommercial_components": true,
+  "submodule_patches": [],
+  "modified_python_files": [
+    "arguments/__init__.py",
+    "scene/cameras.py",
+    "scene/gaussian_model.py",
+    "train.py",
+    "utils/camera_utils.py"
+  ]
+}

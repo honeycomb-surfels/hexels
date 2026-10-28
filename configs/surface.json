@@ -1,0 +1,70 @@
+{
+  "protocol": "hexels_surface_ablation_v1",
+  "dataset": "dtu",
+  "scenes": [
+    "scan24",
+    "scan37",
+    "scan40",
+    "scan55",
+    "scan63",
+    "scan65",
+    "scan69",
+    "scan83",
+    "scan97",
+    "scan105",
+    "scan106",
+    "scan110",
+    "scan114",
+    "scan118",
+    "scan122"
+  ],
+  "seed": 0,
+  "variant": "v3",
+  "baseline_root": "outputs/surface",
+  "extraction": {
+    "expected": {
+      "depth_mode": "expected",
+      "alpha_threshold": 0.0
+    },
+    "median": {
+      "depth_mode": "median",
+      "alpha_threshold": 0.0
+    }
+  },
+  "training": {
+    "baseline": {
+      "stage": "objectives",
+      "options": {}
+    },
+    "normal": {
+      "stage": "objectives",
+      "options": {
+        "surface_normal_objective": "2dgs",
+        "surface_normal_depth_mode": "median",
+        "surface_normal_depth_weight": 0.05,
+        "surface_normal_depth_start": 7000
+      }
+    },
+    "distortion": {
+      "stage": "objectives",
+      "options": {
+        "ray_distortion_weight": 1000.0,
+        "ray_distortion_start": 3000,
+        "ray_distortion_ramp_steps": 1000
+      }
+    },
+    "normal_distortion": {
+      "stage": "objectives",
+      "options": {
+        "surface_normal_objective": "2dgs",
+        "surface_normal_depth_mode": "median",
+        "surface_normal_depth_weight": 0.05,
+        "surface_normal_depth_start": 7000,
+        "ray_distortion_weight": 1000.0,
+        "ray_distortion_start": 3000,
+        "ray_distortion_ramp_steps": 1000
+      }
+    }
+  },
+  "initial_geometry_root": null
+}

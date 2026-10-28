@@ -1,0 +1,21 @@
+{
+  "protocol": "hexels_mixed_growth_v1",
+  "common_options": {
+    "densify_impl": "hexels_safe",
+    "densify_action": "mixed",
+    "densify_from_iter": 5000,
+    "densify_until_iter": 15000,
+    "densification_interval": 500,
+    "densify_max_add": 0,
+    "densify_grad_threshold": 0.0002,
+    "densify_min_denom": 20,
+    "densify_clone_jitter": 0.25,
+    "densify_clone_init_opacity": 0.02,
+    "densify_split_jitter": 0.5,
+    "densify_newborn_grace": 500,
+    "densify_prune_interval": 1000,
+    "densify_prune_max_fraction": 0.02,
+    "opacity_reset_interval": 0,
+    "opacity_cull": 0.005
+  }
+}

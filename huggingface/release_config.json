@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "format": "hexels.paper-checkpoints",
+  "repo_id": "jhu-ccvl/Hexels",
+  "code_version": "0.1.0",
+  "code_repository": "https://github.com/honeycomb-surfels/hexels",
+  "project_website": "https://honeycomb-surfels.github.io/",
+  "code_manifest": "code/hexels_RELEASE_MANIFEST.json",
+  "catalog": "catalog.json",
+  "file_manifest": "FILES.json",
+  "checksums": "SHA256SUMS",
+  "mvs_initialization": "mvs/<dataset>/<scene>/initial_geometry.pt",
+  "models": 525,
+  "scope": "Hexels main performance tables and paper ablations; no baseline weights",
+  "default_representation": "uncompressed_fp32",
+  "table_checkpoint_note": "The 3D main-table metrics use the uncompressed checkpoint. Compressed companions have separate metrics; 2D precision profiles identify their own stored format.",
+  "datasets": {
+    "mipnerf360": "data/mipnerf360",
+    "dtu": "data/dtu",
+    "tanks_and_temples_nvs": "data/tnt_nvs",
+    "tanks_and_temples_surface": "data/tanks_and_temples",
+    "image_gs": "data/imagegs/images"
+  },
+  "checkpoint_semantics": "Model and optimizer tensor values are unchanged. Local paths and tracking-account fields are sanitized in sidecar and embedded metadata; affected files have new checksums, with source checksums retained for provenance.",
+  "license_notes": "DATASET_TERMS.md"
+}

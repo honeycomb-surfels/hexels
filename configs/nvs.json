@@ -1,0 +1,106 @@
+{
+  "protocol": "hexels_nvs_v1",
+  "datasets": {
+    "mipnerf360": [
+      "bicycle",
+      "flowers",
+      "garden",
+      "stump",
+      "treehill",
+      "room",
+      "counter",
+      "kitchen",
+      "bonsai"
+    ],
+    "dtu": [
+      "scan24",
+      "scan37",
+      "scan40",
+      "scan55",
+      "scan63",
+      "scan65",
+      "scan69",
+      "scan83",
+      "scan97",
+      "scan105",
+      "scan106",
+      "scan110",
+      "scan114",
+      "scan118",
+      "scan122"
+    ],
+    "tanks_and_temples": [
+      "Barn",
+      "Caterpillar",
+      "Courthouse",
+      "Ignatius",
+      "Meetingroom",
+      "Truck",
+      "Train",
+      "Francis",
+      "Horse",
+      "Lighthouse"
+    ]
+  },
+  "dataset_roots": {
+    "mipnerf360": "data/mipnerf360",
+    "dtu": "data/dtu",
+    "tanks_and_temples": "data/tnt_nvs"
+  },
+  "seed": 0,
+  "hexels": {
+    "variants": [
+      "v1",
+      "v2",
+      "v3"
+    ],
+    "regimes": [
+      "fixed",
+      "mixed_weak500"
+    ],
+    "population_ceiling": 2000000,
+    "recipe": "configs/growth.json",
+    "iterations": 30000
+  },
+  "native_baselines": [
+    "2dgs",
+    "3dgs",
+    "3d_convex",
+    "triangle",
+    "bbsplat",
+    "nexels",
+    "mesh_splatting",
+    "milo"
+  ],
+  "controlled_baselines": [],
+  "controlled_regimes": [],
+  "population_policy": "adaptive_with_ceiling_no_forced_final_count",
+  "budget_reference_seed": 0,
+  "repeats": {
+    "seeds": [],
+    "datasets": {},
+    "arms": []
+  },
+  "video": {
+    "fps": 24,
+    "frames": 192,
+    "max_width": 1280,
+    "max_height": 720,
+    "codec": "libx264",
+    "crf": 23,
+    "trajectory": "shared_scene_camera_contract",
+    "save_intermediate_frames": false
+  },
+  "measurement": {
+    "warmup_passes": 2,
+    "timed_passes": 10,
+    "timing_trials": 4,
+    "resource_sample_seconds": 0.2,
+    "average_vram": "time_weighted_process_tree_bytes_by_phase",
+    "model_storage_units": "decimal_MB",
+    "store_test_renders": true
+  },
+  "planned_training_runs": {
+    "total": 476
+  }
+}

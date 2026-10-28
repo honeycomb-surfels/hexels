@@ -1,0 +1,12 @@
+name: hexels-tnt-eval
+channels:
+  - conda-forge
+dependencies:
+  - python=3.8
+  - pip=24.3.1
+  - pip:
+      - numpy==1.23.5
+      - scipy==1.10.1
+      - open3d==0.10.0.0
+      - matplotlib==3.7.5
+      - trimesh==4.5.3

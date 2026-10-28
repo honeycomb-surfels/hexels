@@ -1,0 +1,12 @@
+{
+  "url": "https://github.com/Anttwo/MILo",
+  "revision": "0c38aa65f8b768513964f13246ef1ae54f001c70",
+  "patch": null,
+  "patch_sha256": null,
+  "licenses": [
+    "LICENSE.md"
+  ],
+  "research_noncommercial_components": true,
+  "submodule_patches": [],
+  "modified_python_files": []
+}

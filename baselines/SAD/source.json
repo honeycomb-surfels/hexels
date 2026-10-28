@@ -1,0 +1,12 @@
+{
+  "url": "https://github.com/LuckyIYI/SAD",
+  "revision": "d86c653abdf1c879d9bbd67bbb3b911d10f8a671",
+  "patch": "adaptations.patch",
+  "patch_sha256": "32b2decc563ab7194c9e0a597e73852e046bd30a2e7a15e6de83c9ce8ed1b10b",
+  "licenses": [
+    "LICENSE"
+  ],
+  "research_noncommercial_components": false,
+  "submodule_patches": [],
+  "modified_python_files": []
+}

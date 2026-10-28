@@ -1,0 +1,26 @@
+{
+  "url": "https://github.com/hbb1/2d-gaussian-splatting",
+  "revision": "335ad612f2e783a4e57b9cbc4d1e167bd599fc98",
+  "patch": "adaptations.patch",
+  "patch_sha256": "11c60040618b7f2add85958fbeb156d9927414cb96493e4fedd24fc0f83ea2c6",
+  "licenses": [
+    "LICENSE.md"
+  ],
+  "research_noncommercial_components": true,
+  "submodule_patches": [],
+  "modified_python_files": [
+    "arguments/__init__.py",
+    "render.py",
+    "scene/__init__.py",
+    "scene/gaussian_model.py",
+    "scripts/eval_dtu/eval.py",
+    "scripts/eval_dtu/evaluate_single_scene.py",
+    "scripts/eval_tnt/evaluation.py",
+    "train.py",
+    "utils/general_utils.py",
+    "utils/image_utils.py",
+    "utils/point_utils.py",
+    "utils/render_utils.py",
+    "utils/train_camera_manifest.py"
+  ]
+}

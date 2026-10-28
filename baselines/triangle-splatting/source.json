@@ -1,0 +1,16 @@
+{
+  "url": "https://github.com/trianglesplatting/triangle-splatting",
+  "revision": "685ff270a8273afc3a2b094ae3148dd0b98e31e9",
+  "patch": "adaptations.patch",
+  "patch_sha256": "fab53ec804634934042d21cd22ea592d209df7f9df91d8cc1ddce42b260ef7ae",
+  "licenses": [
+    "LICENSE.md",
+    "LICENSE_GS.md"
+  ],
+  "research_noncommercial_components": true,
+  "submodule_patches": [],
+  "modified_python_files": [
+    "scene/triangle_model.py",
+    "train.py"
+  ]
+}

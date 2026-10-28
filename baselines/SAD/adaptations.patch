@@ -1,0 +1,79 @@
+diff --git a/backends/cuda/src/sad_cuda.cu b/backends/cuda/src/sad_cuda.cu
+index 71626e6..7147db8 100644
+--- a/backends/cuda/src/sad_cuda.cu
++++ b/backends/cuda/src/sad_cuda.cu
+@@ -228,6 +228,9 @@ static Mask defaultMask(int width, int height) {
+ 
+ static bool saveImage(const std::string& path, const std::vector<float3>& pixels,
+                       int width, int height) {
++    std::ofstream raw(path + ".f32", std::ios::binary);
++    raw.write(reinterpret_cast<const char*>(pixels.data()), pixels.size() * sizeof(float3));
++    if (!raw) throw std::runtime_error("Cannot write float render: " + path);
+     std::vector<unsigned char> out(static_cast<size_t>(width) * height * 3);
+     for (int y = 0; y < height; ++y) {
+         for (int x = 0; x < width; ++x) {
+@@ -1677,6 +1680,7 @@ static int countActiveSitesHost(const std::vector<Site>& sites) {
+ 
+ static void renderVoronoiFromSites(const RenderOptions& options) {
+     LoadedSites loaded = loadSites(options.sitesPath);
++    const auto decodeStart = std::chrono::steady_clock::now();
+     int width = loaded.hasSize ? loaded.width : options.widthOverride;
+     int height = loaded.hasSize ? loaded.height : options.heightOverride;
+     if (width <= 0 || height <= 0) {
+@@ -1803,6 +1807,28 @@ static void renderVoronoiFromSites(const RenderOptions& options) {
+     CUDA_CHECK(cudaEventSynchronize(renderStop));
+     CUDA_CHECK(cudaEventElapsedTime(&renderMs, renderStart, renderStop));
+ 
++    const double preparationSeconds = std::chrono::duration<double>(
++        std::chrono::steady_clock::now() - decodeStart).count();
++    auto renderOnce = [&]() {
++        launchRenderVoronoi(cand0A.ptr, cand1A.ptr, d_render.ptr, d_sites.ptr,
++                           invScaleSq, static_cast<uint32_t>(loaded.sites.size()),
++                           width, height, candWidth, candHeight, stream);
++    };
++    for (int warmup = 0; warmup < 10; ++warmup) renderOnce();
++    cudaSync("renderWarmup");
++    std::vector<double> renderTrials;
++    for (int trial = 0; trial < 5; ++trial) {
++        const auto started = std::chrono::steady_clock::now();
++        for (int repeat = 0; repeat < 20; ++repeat) renderOnce();
++        cudaSync("renderBenchmark");
++        renderTrials.push_back(std::chrono::duration<double>(
++            std::chrono::steady_clock::now() - started).count() / 20.0);
++    }
++    std::cout << "BENCHMARK_JSON " << json({
++        {"preparation_and_first_render_seconds", preparationSeconds},
++        {"cached_render_seconds_trials", renderTrials}, {"candidate_ms", candMs}
++    }).dump() << std::endl;
++
+     if (!options.renderTargetPath.empty()) {
+         Image target = loadImage(options.renderTargetPath, std::max(width, height));
+         if (target.width != width || target.height != height) {
+@@ -2112,6 +2138,8 @@ static void trainVoronoi(const TrainingOptions& input) {
+     CUDA_CHECK(cudaEventRecord(sitesReady, stream));
+ 
+     std::cout << "Logs | Iter | PSNR | Active | speed | elapsed" << std::endl;
++    fs::create_directories(options.outputDir);
++    std::ofstream history(fs::path(options.outputDir) / "history.jsonl");
+     auto startTime = std::chrono::steady_clock::now();
+ 
+     float invScaleSq = 1.0f / (float(std::max(width, height)) * float(std::max(width, height)));
+@@ -2469,6 +2497,9 @@ static void trainVoronoi(const TrainingOptions& input) {
+                           << " | " << elapsed << "s" << std::endl;
+             }
+ 
++            history << json({{"step", iter + 1}, {"psnr_db", psnr},
++                             {"training_seconds", elapsed}, {"primitives", activeCount}}).dump()
++                    << std::endl;
+             finalPSNR = psnr;
+             bestPSNR = std::max(bestPSNR, psnr);
+             if (options.ssimMetric) {
+@@ -2480,6 +2511,8 @@ static void trainVoronoi(const TrainingOptions& input) {
+ 
+     auto trainEndTime = std::chrono::steady_clock::now();
+     float trainTime = std::chrono::duration<float>(trainEndTime - startTime).count();
++    std::cout << "TRAINING_JSON " << json({{"training_seconds", trainTime},
++        {"iterations", options.iterations}}).dump() << std::endl;
+     applyPendingCandidates();
+ 
+     launchRenderVoronoi(

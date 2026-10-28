@@ -1,0 +1,178 @@
+{
+  "image-gs": {
+    "url": "https://github.com/NYU-ICL/image-gs",
+    "revision": "03088368d42684fb54225c981cfd94b58cc0393a",
+    "patch": null,
+    "patch_sha256": null,
+    "licenses": [
+      "LICENSE"
+    ],
+    "research_noncommercial_components": false,
+    "submodule_patches": [],
+    "modified_python_files": []
+  },
+  "2d-gaussian-splatting": {
+    "url": "https://github.com/hbb1/2d-gaussian-splatting",
+    "revision": "335ad612f2e783a4e57b9cbc4d1e167bd599fc98",
+    "patch": "adaptations.patch",
+    "patch_sha256": "11c60040618b7f2add85958fbeb156d9927414cb96493e4fedd24fc0f83ea2c6",
+    "licenses": [
+      "LICENSE.md"
+    ],
+    "research_noncommercial_components": true,
+    "submodule_patches": [],
+    "modified_python_files": [
+      "arguments/__init__.py",
+      "render.py",
+      "scene/__init__.py",
+      "scene/gaussian_model.py",
+      "scripts/eval_dtu/eval.py",
+      "scripts/eval_dtu/evaluate_single_scene.py",
+      "scripts/eval_tnt/evaluation.py",
+      "train.py",
+      "utils/general_utils.py",
+      "utils/image_utils.py",
+      "utils/point_utils.py",
+      "utils/render_utils.py",
+      "utils/train_camera_manifest.py"
+    ]
+  },
+  "gaussian-splatting": {
+    "url": "https://github.com/graphdeco-inria/gaussian-splatting",
+    "revision": "54c035f7834b564019656c3e3fcc3646292f727d",
+    "patch": "adaptations.patch",
+    "patch_sha256": "ac087ae71e7f54116a172b7b4574b2353959c7dccde1d56612771af15ea77dfc",
+    "licenses": [
+      "LICENSE.md"
+    ],
+    "research_noncommercial_components": true,
+    "submodule_patches": [],
+    "modified_python_files": [
+      "arguments/__init__.py",
+      "scene/cameras.py",
+      "scene/gaussian_model.py",
+      "train.py",
+      "utils/camera_utils.py"
+    ]
+  },
+  "convex-splatting": {
+    "url": "https://github.com/convexsplatting/convex-splatting",
+    "revision": "27f83f8b6fbeecef98530e6b56dbd76b73760685",
+    "patch": "adaptations.patch",
+    "patch_sha256": "034d0cab3fbbd92302b97dbc855becf175789e8e05f0b93cad04b5fc663c86cd",
+    "licenses": [
+      "LICENSE.md",
+      "LICENSE_GS.md"
+    ],
+    "research_noncommercial_components": true,
+    "submodule_patches": [],
+    "modified_python_files": [
+      "arguments/__init__.py",
+      "scene/convex_model.py",
+      "train.py",
+      "utils/camera_utils.py"
+    ]
+  },
+  "triangle-splatting": {
+    "url": "https://github.com/trianglesplatting/triangle-splatting",
+    "revision": "685ff270a8273afc3a2b094ae3148dd0b98e31e9",
+    "patch": "adaptations.patch",
+    "patch_sha256": "fab53ec804634934042d21cd22ea592d209df7f9df91d8cc1ddce42b260ef7ae",
+    "licenses": [
+      "LICENSE.md",
+      "LICENSE_GS.md"
+    ],
+    "research_noncommercial_components": true,
+    "submodule_patches": [],
+    "modified_python_files": [
+      "scene/triangle_model.py",
+      "train.py"
+    ]
+  },
+  "BBSplat": {
+    "url": "https://github.com/david-svitov/BBSplat",
+    "revision": "cff8d6a7bce27c56b6938482dbdc72b882cd53bb",
+    "patch": null,
+    "patch_sha256": null,
+    "licenses": [
+      "LICENSE.md",
+      "LICENSE_BBSplat.txt"
+    ],
+    "research_noncommercial_components": true,
+    "submodule_patches": [],
+    "modified_python_files": []
+  },
+  "nexels": {
+    "url": "https://github.com/victor-rong/nexels",
+    "revision": "e975afad5b301b843a75f3a60f234aea4406aa77",
+    "patch": "adaptations.patch",
+    "patch_sha256": "66453a22d68ee9dbe5f23093dcb389d3f00e69f2492e36d3dbd81a8de8f6324e",
+    "licenses": [
+      "LICENSE.md"
+    ],
+    "research_noncommercial_components": true,
+    "submodule_patches": [],
+    "modified_python_files": [
+      "arguments/__init__.py",
+      "render.py",
+      "scene/cameras.py",
+      "utils/camera_utils.py"
+    ]
+  },
+  "mesh-splatting": {
+    "url": "https://github.com/meshsplatting/mesh-splatting",
+    "revision": "2a810a6c353215685307da3d4cc6ebd73b1c387b",
+    "patch": "adaptations.patch",
+    "patch_sha256": "67b2cdc862b9f6e60f38f819888966b85cd08f5fd7f9e2b68bf85e901ed88893",
+    "licenses": [
+      "LICENSE.md",
+      "LICENSE_GS.md"
+    ],
+    "research_noncommercial_components": true,
+    "submodule_patches": [],
+    "modified_python_files": [
+      "arguments/__init__.py",
+      "scene/__init__.py",
+      "scene/triangle_model.py",
+      "train.py",
+      "utils/camera_utils.py",
+      "utils/memory_control.py"
+    ]
+  },
+  "MILo": {
+    "url": "https://github.com/Anttwo/MILo",
+    "revision": "0c38aa65f8b768513964f13246ef1ae54f001c70",
+    "patch": null,
+    "patch_sha256": null,
+    "licenses": [
+      "LICENSE.md"
+    ],
+    "research_noncommercial_components": true,
+    "submodule_patches": [],
+    "modified_python_files": []
+  },
+  "SAD": {
+    "url": "https://github.com/LuckyIYI/SAD",
+    "revision": "d86c653abdf1c879d9bbd67bbb3b911d10f8a671",
+    "patch": "adaptations.patch",
+    "patch_sha256": "32b2decc563ab7194c9e0a597e73852e046bd30a2e7a15e6de83c9ce8ed1b10b",
+    "licenses": [
+      "LICENSE"
+    ],
+    "research_noncommercial_components": false,
+    "submodule_patches": [],
+    "modified_python_files": []
+  },
+  "fused-ssim": {
+    "url": "https://github.com/rahul-goel/fused-ssim.git",
+    "revision": "1272e21a282342e89537159e4bad508b19b34157",
+    "patch": null,
+    "patch_sha256": null,
+    "licenses": [
+      "LICENSE"
+    ],
+    "research_noncommercial_components": false,
+    "submodule_patches": [],
+    "modified_python_files": []
+  }
+}

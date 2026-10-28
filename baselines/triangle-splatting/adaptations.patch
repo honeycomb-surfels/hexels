@@ -1,0 +1,132 @@
+diff --git a/scene/triangle_model.py b/scene/triangle_model.py
+--- a/scene/triangle_model.py
++++ b/scene/triangle_model.py
+@@ -1,3 +1,4 @@
++# Modified for the Hexels release: shared protocols and capacity/evaluation adapters.
+ #
+ # The original code is under the following copyright:
+ # Copyright (C) 2023, Inria
+@@ -121,6 +122,32 @@
+     return out_points
+ 
+ 
++def triangles_from_normals(
++    centers: torch.Tensor,
++    radii: torch.Tensor,
++    normals: np.ndarray,
++) -> torch.Tensor | None:
++    normal_tensor = torch.as_tensor(normals, dtype=torch.float32, device=centers.device)
++    lengths = torch.linalg.vector_norm(normal_tensor, dim=1, keepdim=True)
++    if not bool(torch.isfinite(normal_tensor).all()) or not bool((lengths > 1e-6).all()):
++        return None
++    unit = normal_tensor / lengths
++    reference = torch.zeros_like(unit)
++    use_y = unit[:, 2].abs() > 0.9
++    reference[:, 2] = 1.0
++    reference[use_y] = reference.new_tensor((0.0, 1.0, 0.0))
++    tangent_u = torch.nn.functional.normalize(torch.linalg.cross(reference, unit), dim=1)
++    tangent_v = torch.linalg.cross(unit, tangent_u)
++    angles = torch.arange(3, dtype=centers.dtype, device=centers.device) * (
++        2.0 * math.pi / 3.0
++    )
++    offsets = (
++        torch.cos(angles)[None, :, None] * tangent_u[:, None, :]
++        + torch.sin(angles)[None, :, None] * tangent_v[:, None, :]
++    )
++    return centers[:, None, :] + radii[:, None, :] * offsets
++
++
+ def densify_pcd_on_box(pcd: BasicPointCloud, num_new_points: int, scale_box: float = 1.0):
+     """
+     Densify the point cloud by sampling new points on all 6 faces of its (optionally scaled) bounding box.
+@@ -437,7 +464,15 @@
+         
+         radii = init_size * torch.sqrt(dist2).unsqueeze(1)
+ 
+-        points_per_triangle = generate_triangles_in_chunks(x, y, z, radii, nb_points)
++        points_per_triangle = None
++        if no_dome and nb_points == 3:
++            points_per_triangle = triangles_from_normals(
++                fused_point_cloud,
++                radii,
++                np.asarray(pcd.normals),
++            )
++        if points_per_triangle is None:
++            points_per_triangle = generate_triangles_in_chunks(x, y, z, radii, nb_points)
+ 
+         num_points_per_triangle = []
+         for i in range(points_per_triangle.size(0)):
+@@ -723,6 +758,23 @@
+         self._cumsum_of_points_per_triangle = cumsum_of_points_per_triangle
+         self._number_of_points = number_of_points
+ 
++    def cap_primitives(self, max_primitives):
++        if max_primitives <= 0 or self._triangles_points.shape[0] <= max_primitives:
++            return
++        scores = self.get_opacity.squeeze(-1)
++        keep = torch.topk(scores, max_primitives).indices
++        prune_mask = torch.ones(scores.shape[0], dtype=torch.bool, device="cuda")
++        prune_mask[keep] = False
++        self.prune_points(prune_mask)
++        count = self._triangles_points.shape[0]
++        self.denom = torch.zeros((count, 1), device="cuda")
++        self.max_scaling = torch.zeros(count, device="cuda")
++        self.max_radii2D = torch.zeros(count, device="cuda")
++        self.max_density_factor = torch.zeros(count, device="cuda")
++        self.triangle_area = torch.zeros(count, device="cuda")
++        self.image_size = torch.zeros(count, device="cuda")
++        self.importance_score = torch.zeros(count, device="cuda")
++
+     def add_new_gs(self, cap_max, oddGroup=True, dead_mask=None):
+         current_num_points = self._opacity.shape[0]
+         target_num = min(cap_max, int(self.add_shape * current_num_points))
+@@ -742,6 +794,9 @@
+             
+         probs[dead_mask] = 0
+ 
++        if not torch.any(probs > 0):
++            return 0
++
+         compar = self.image_size
+         big_mask   = compar > self.split_size
+ 
+@@ -808,6 +863,8 @@
+         self.importance_score = torch.zeros((self.get_triangles_points.shape[0]), device="cuda")
+ 
+     def remove_final_points(self, mask):
++        if torch.all(mask):
++            return
+         self.prune_points(mask)
+         self.triangle_area = torch.zeros((self.get_triangles_points.shape[0]), device="cuda")
+         self.image_size = torch.zeros((self.get_triangles_points.shape[0]), device="cuda")
+diff --git a/train.py b/train.py
+--- a/train.py
++++ b/train.py
+@@ -1,3 +1,4 @@
++# Modified for the Hexels release: shared protocols and capacity/evaluation adapters.
+ #
+ # The original code is under the following copyright:
+ # Copyright (C) 2023, Inria
+@@ -64,6 +65,7 @@
+     if checkpoint:
+         (model_params, first_iter) = torch.load(checkpoint)
+         triangles.restore(model_params, opt)
++    triangles.cap_primitives(opt.max_shapes)
+ 
+     bg_color = [1, 1, 1] if dataset.white_background else [0, 0, 0]
+     background = torch.tensor(bg_color, dtype=torch.float32, device="cuda")
+@@ -188,6 +190,7 @@
+             
+             training_report(tb_writer, iteration, pixel_loss, loss, loss_fn, iter_start.elapsed_time(iter_end), testing_iterations, scene, render, (pipe, background))
+             if iteration in save_iterations:
++                triangles.cap_primitives(opt.max_shapes)
+                 print("\n[ITER {}] Saving Triangles".format(iteration))
+                 scene.save(iteration)
+             if iteration % 1000 == 0:
+@@ -372,4 +375,4 @@
+              )
+     
+     # All done
+-    print("\nTraining complete.")
+\ No newline at end of file
++    print("\nTraining complete.")
