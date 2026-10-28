@@ -125,4 +125,4 @@ A public App Store or TestFlight build is not available yet. Build locally with 
 
 Based on [Honeycomb-Surfels: Compact Hexagonal Primitives for Efficient Scene Rendering and Reconstruction](https://arxiv.org/abs/2610.37668), by Prakhar Kaushik, Soumava Paul and Alan Yuille. Software citation: [CITATION.cff](CITATION.cff).
 
-Hexel Edge is [MIT licensed](LICENSE), copyright © 2026 Prakhar Kaushik. Dependencies and benchmark content retain their own terms: [third-party notices](THIRD_PARTY.md).
+Hexel Edge is [MIT licensed](LICENSE), copyright © 2026 Prakhar Kaushik and Soumava Paul. Dependencies and benchmark content retain their own terms: [third-party notices](THIRD_PARTY.md).
