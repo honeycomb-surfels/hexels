@@ -9,7 +9,7 @@
 <table>
   <tr>
     <td width="220" align="center"><a href="hexel_edge/"><img src="hexel_edge/assets/logo-wordmark.svg" width="200" alt="Hexel Edge"></a></td>
-    <td><strong>Open-source, on-device 3D.</strong><br>Capture, train, render and export Hexels locally. Verified on M2 iPad; physical iPhone testing next.</td>
+    <td><strong>Open-source, on-device 3D.</strong><br>Capture, train, render and export Hexels locally.</td>
   </tr>
 </table>
 
