@@ -1,0 +1,307 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000000000000000000001 /* HexelsEdgeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* HexelsEdgeApp.swift */; };
+		A10000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* ContentView.swift */; };
+		A10000000000000000000003 /* EdgeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* EdgeModel.swift */; };
+		A10000000000000000000004 /* TrainingWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000004 /* TrainingWorker.swift */; };
+		A10000000000000000000005 /* HexelsMetal in Frameworks */ = {isa = PBXBuildFile; productRef = A90000000000000000000001 /* HexelsMetal */; };
+		0939465D53C43C1E3795F921 /* DevicePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE4423CE68C21BE7B587E48E /* DevicePolicy.swift */; };
+		39452A0023343D99FB69F38B /* DeviceTelemetry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9D368B2162E652F2E323B5 /* DeviceTelemetry.swift */; };
+		AEE67B3DA02A0024508ACB6D /* BenchmarkReport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9242C01FEB11F62C1BFAEB /* BenchmarkReport.swift */; };
+		1F0DDFE4FCD59E378D0209CF /* EdgeVisuals.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F5F475D582B42521A3ABF4 /* EdgeVisuals.swift */; };
+		222F0DBFFE5EB23DCD3FD16F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6C36FFE920F24CEDB7CFDBFC /* Assets.xcassets */; };
+		915F24644901FEF152357A8D /* CaptureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7088250414B4488C4EC91CD9 /* CaptureController.swift */; };
+		51EFE1AF7A75979C14AB60EF /* CaptureBundleRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AC52E44778B1D2195C3E286 /* CaptureBundleRecorder.swift */; };
+		96C86C2CEEBE1CC8913E3270 /* CapturePixels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A45CF74E05DE4B6108222FE8 /* CapturePixels.swift */; };
+		78338859AC23AB0ED44D1459 /* CaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 554E02500944CB19A530429B /* CaptureView.swift */; };
+		1087B427FFE2B2FF9DB9ADE6 /* SurfacePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F25C8ADF0D3DA93B789D1F /* SurfacePreviewView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A20000000000000000000001 /* HexelsEdgeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexelsEdgeApp.swift; sourceTree = "<group>"; };
+		A20000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A20000000000000000000003 /* EdgeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeModel.swift; sourceTree = "<group>"; };
+		A20000000000000000000004 /* TrainingWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingWorker.swift; sourceTree = "<group>"; };
+		A20000000000000000000005 /* HexelsEdge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HexelsEdge.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000006 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A20000000000000000000007 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config/Signing.xcconfig; sourceTree = "<group>"; };
+		FE4423CE68C21BE7B587E48E /* DevicePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePolicy.swift; sourceTree = "<group>"; };
+		0A9D368B2162E652F2E323B5 /* DeviceTelemetry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTelemetry.swift; sourceTree = "<group>"; };
+		2A9242C01FEB11F62C1BFAEB /* BenchmarkReport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkReport.swift; sourceTree = "<group>"; };
+		E2F5F475D582B42521A3ABF4 /* EdgeVisuals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeVisuals.swift; sourceTree = "<group>"; };
+		6C36FFE920F24CEDB7CFDBFC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7088250414B4488C4EC91CD9 /* CaptureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureController.swift; sourceTree = "<group>"; };
+		5AC52E44778B1D2195C3E286 /* CaptureBundleRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureBundleRecorder.swift; sourceTree = "<group>"; };
+		A45CF74E05DE4B6108222FE8 /* CapturePixels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapturePixels.swift; sourceTree = "<group>"; };
+		554E02500944CB19A530429B /* CaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureView.swift; sourceTree = "<group>"; };
+		84F25C8ADF0D3DA93B789D1F /* SurfacePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurfacePreviewView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A40000000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000005 /* HexelsMetal in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A30000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				A30000000000000000000002 /* HexelsEdge */,
+				A30000000000000000000003 /* Products */,
+				A20000000000000000000007 /* Signing.xcconfig */,
+			);
+			sourceTree = "<group>";
+		};
+		A30000000000000000000002 /* HexelsEdge */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000001 /* HexelsEdgeApp.swift */,
+				A20000000000000000000002 /* ContentView.swift */,
+				A20000000000000000000003 /* EdgeModel.swift */,
+				A20000000000000000000004 /* TrainingWorker.swift */,
+				FE4423CE68C21BE7B587E48E /* DevicePolicy.swift */,
+				0A9D368B2162E652F2E323B5 /* DeviceTelemetry.swift */,
+				2A9242C01FEB11F62C1BFAEB /* BenchmarkReport.swift */,
+				E2F5F475D582B42521A3ABF4 /* EdgeVisuals.swift */,
+				6C36FFE920F24CEDB7CFDBFC /* Assets.xcassets */,
+				7088250414B4488C4EC91CD9 /* CaptureController.swift */,
+				5AC52E44778B1D2195C3E286 /* CaptureBundleRecorder.swift */,
+				A45CF74E05DE4B6108222FE8 /* CapturePixels.swift */,
+				554E02500944CB19A530429B /* CaptureView.swift */,
+				84F25C8ADF0D3DA93B789D1F /* SurfacePreviewView.swift */,
+				A20000000000000000000006 /* Info.plist */,
+			);
+			path = HexelsEdge;
+			sourceTree = "<group>";
+		};
+		A30000000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000005 /* HexelsEdge.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A50000000000000000000001 /* HexelsEdge */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A70000000000000000000002 /* Build configuration list for PBXNativeTarget "HexelsEdge" */;
+			buildPhases = (
+				A40000000000000000000001 /* Sources */,
+				A40000000000000000000002 /* Frameworks */,
+				A40000000000000000000003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = HexelsEdge;
+			packageProductDependencies = (
+				A90000000000000000000001 /* HexelsMetal */,
+			);
+			productName = HexelsEdge;
+			productReference = A20000000000000000000005 /* HexelsEdge.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A60000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 1800;
+				LastUpgradeCheck = 1800;
+				TargetAttributes = {
+					A50000000000000000000001 = {
+						CreatedOnToolsVersion = 18.0;
+					};
+				};
+			};
+			buildConfigurationList = A70000000000000000000001 /* Build configuration list for PBXProject "HexelsEdge" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A30000000000000000000001;
+			packageReferences = (
+				A80000000000000000000001 /* XCLocalSwiftPackageReference ".." */,
+			);
+			productRefGroup = A30000000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A50000000000000000000001 /* HexelsEdge */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A40000000000000000000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				222F0DBFFE5EB23DCD3FD16F /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A40000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				915F24644901FEF152357A8D /* CaptureController.swift in Sources */,
+				51EFE1AF7A75979C14AB60EF /* CaptureBundleRecorder.swift in Sources */,
+				96C86C2CEEBE1CC8913E3270 /* CapturePixels.swift in Sources */,
+				78338859AC23AB0ED44D1459 /* CaptureView.swift in Sources */,
+				1087B427FFE2B2FF9DB9ADE6 /* SurfacePreviewView.swift in Sources */,
+				A10000000000000000000001 /* HexelsEdgeApp.swift in Sources */,
+				A10000000000000000000002 /* ContentView.swift in Sources */,
+				A10000000000000000000003 /* EdgeModel.swift in Sources */,
+				A10000000000000000000004 /* TrainingWorker.swift in Sources */,
+				1F0DDFE4FCD59E378D0209CF /* EdgeVisuals.swift in Sources */,
+				AEE67B3DA02A0024508ACB6D /* BenchmarkReport.swift in Sources */,
+				39452A0023343D99FB69F38B /* DeviceTelemetry.swift in Sources */,
+				0939465D53C43C1E3795F921 /* DevicePolicy.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		B10000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		B10000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		B10000000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A20000000000000000000007 /* Signing.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HexelsEdge/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Hexel Edge";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = io.hexels.edgeprototype;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B10000000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A20000000000000000000007 /* Signing.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = HexelsEdge/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Hexel Edge";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = io.hexels.edgeprototype;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A70000000000000000000001 /* Build configuration list for PBXProject "HexelsEdge" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B10000000000000000000001 /* Debug */,
+				B10000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A70000000000000000000002 /* Build configuration list for PBXNativeTarget "HexelsEdge" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B10000000000000000000003 /* Debug */,
+				B10000000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		A80000000000000000000001 /* XCLocalSwiftPackageReference ".." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ..;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A90000000000000000000001 /* HexelsMetal */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A80000000000000000000001 /* XCLocalSwiftPackageReference ".." */;
+			productName = HexelsMetal;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = A60000000000000000000001 /* Project object */;
+}

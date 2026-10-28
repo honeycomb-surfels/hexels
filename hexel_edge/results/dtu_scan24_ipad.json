@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "measurement_date": "2026-10-28",
+  "scene": "DTU scan24",
+  "device": "12.9-inch iPad Pro (sixth generation), Apple M2",
+  "os": "iPadOS 26.7.2",
+  "workload": {
+    "variant": "V1, FP32, fixed population, detail recipe",
+    "training_images": 42,
+    "reserved_images": 6,
+    "optimization_resolution": [
+      640,
+      480
+    ],
+    "evaluation_resolution": [
+      640,
+      480
+    ],
+    "hexels": 6598,
+    "initialization": "Mac-prepared supplied cameras and training-only 1280-pixel feature seeds; no optimized Mac checkpoint imported"
+  },
+  "quality": {
+    "pooled_float_rgb_psnr_db": 25.209710506626525,
+    "mean_display_png_ssim": 0.7984552650645264,
+    "best_step": 32920,
+    "reserved_view_selection": "Same six views reused for development selection; not blind benchmark."
+  },
+  "optimization": {
+    "total_on_device_updates": 32920,
+    "measured_updates": 32880,
+    "measured_start_step": 40,
+    "measured_wall_seconds": 1200.7114539146423,
+    "update_loop_seconds": 1164.112083624995,
+    "mean_update_loop_ms": 35.40486872338793
+  },
+  "resources": {
+    "thermal_state_counts": {
+      "nominal": 233
+    },
+    "sample_count": 233,
+    "peak_sampled_process_footprint_mib": 64.8757553100586,
+    "battery_start_percent": 100,
+    "battery_end_percent": 95,
+    "coarse_drop_percentage_points": 5,
+    "all_samples_unplugged": true,
+    "network_state": "offline throughout the 20-minute run"
+  },
+  "verification": {
+    "original_final_checkpoint_sha256": "144f4e615acb0b0f31d8b6b1ad8b646e4c9b3e3712811571fe731ea5a971c774",
+    "finite_model_and_optimizer_state_verified": true,
+    "exact_experiment_context_verified": true,
+    "independent_mac_rerender": "All six native per-view metrics and exported render/target pixel arrays reproduced exactly.",
+    "best_and_final_tensor_payloads_identical": true,
+    "network_state_evidence": "Tester confirmed personally observing the network-disabled state."
+  },
+  "conditions": [
+    "Release, no debugger, foreground, offline, unplugged, brightness approximately 50%.",
+    "Thermal categories report OS pressure, not Celsius or direct GPU clock/throttling measurements.",
+    "Coarse whole-device battery estimates began at full charge; no idle-screen baseline or precise energy/power measurement.",
+    "Process peak is sampled; Metal allocations overlap unified system/process memory.",
+    "Single development scene and recipe, not a general phone-quality or battery-life guarantee."
+  ],
+  "privacy": "Public DTU benchmark only. Personal signing/device/account identifiers, private captures, absolute paths and wall-clock activity timestamps are omitted."
+}

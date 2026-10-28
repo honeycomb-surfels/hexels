@@ -1,0 +1,4 @@
+// Optional workstation-only signing settings. Never commit LocalSigning.xcconfig.
+// Copy LocalSigning.example.xcconfig to LocalSigning.xcconfig and set your team.
+DEVELOPMENT_TEAM =
+#include? "LocalSigning.xcconfig"

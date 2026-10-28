@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use Hexel Edge, please cite this software and the Hexels paper linked in the README."
+type: software
+title: "Hexel Edge: Experimental On-Device Hexels Reconstruction"
+authors:
+  - family-names: Kaushik
+    given-names: Prakhar
+version: 0.1.0
+license: MIT
+repository-code: "https://github.com/honeycomb-surfels/hexels"
+url: "https://github.com/honeycomb-surfels/hexels/tree/main/hexel_edge"

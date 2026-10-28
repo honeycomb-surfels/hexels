@@ -1,0 +1,3 @@
+# Native Cairo is also required (for example: brew install cairo on macOS).
+CairoSVG==2.9.1
+Pillow==13.0.0

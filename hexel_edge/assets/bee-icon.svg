@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Hexel Edge bee icon</title>
+  <desc id="desc">An original geometric bee with faceted cream wings and an amber striped body on charcoal.</desc>
+  <defs>
+    <linearGradient id="field" x2="1" y2="1"><stop stop-color="#252A2D"/><stop offset="1" stop-color="#111618"/></linearGradient>
+    <linearGradient id="honey" x2=".7" y2="1"><stop stop-color="#FFD576"/><stop offset="1" stop-color="#F2A82B"/></linearGradient>
+    <linearGradient id="wing" x2="1" y2="1"><stop stop-color="#FFF8E7"/><stop offset="1" stop-color="#DCDACB"/></linearGradient>
+    <clipPath id="abdomen"><path d="M213 241 256 221 299 241 306 310 283 353 256 376 229 353 206 310Z"/></clipPath>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#field)"/>
+  <path d="m256 51 177 102v205L256 460 79 358V153Z" fill="none" stroke="#FFC45C" stroke-opacity=".12" stroke-width="2"/>
+  <path d="m256 77 155 89v179l-155 90-155-90V166Z" fill="none" stroke="#FFF4DC" stroke-opacity=".05" stroke-width="2"/>
+  <g transform="rotate(-15 256 256)">
+    <path d="m240 239-75-2-49-58 6-70 52-17 53 49 27 76Z" fill="url(#wing)"/>
+    <path d="m272 239 75-2 49-58-6-70-52-17-53 49-27 76Z" fill="url(#wing)"/>
+    <path d="m123 110 64 71 54 57m-124-59 70 2 40-40m163-31-64 71-54 57m124-59-70 2-40-40" fill="none" stroke="#B6B4A6" stroke-opacity=".5" stroke-width="3"/>
+    <path d="m231 199-16-35-17-8m83 43 16-35 17-8" fill="none" stroke="#FFC45C" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="195" cy="155" r="7" fill="#FFC45C"/><circle cx="317" cy="155" r="7" fill="#FFC45C"/>
+    <path d="M213 241 256 221 299 241 306 310 283 353 256 376 229 353 206 310Z" fill="url(#honey)"/>
+    <g clip-path="url(#abdomen)" fill="#1B2124"><path d="M198 264h116v27H198Z"/><path d="M198 318h116v25H198Z"/></g>
+    <path d="m256 376-10 16h20Z" fill="#FFC45C"/>
+    <path d="m256 193 33 19v37l-33 19-33-19v-37Z" fill="#1B2124" stroke="#FFC45C" stroke-width="7"/>
+    <circle cx="243" cy="225" r="4" fill="#FFF4DC"/><circle cx="269" cy="225" r="4" fill="#FFF4DC"/>
+    <path d="m211 281-26 11m116-11 26 11m-112 29-18 18m100-18 18 18" fill="none" stroke="#FFC45C" stroke-width="7" stroke-linecap="round"/>
+  </g>
+</svg>

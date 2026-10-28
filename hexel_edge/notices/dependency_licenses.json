@@ -1,0 +1,110 @@
+{
+  "checked_date": "2026-10-28",
+  "scope": "Reference support-tool license snapshots, not a pinned environment or a complete binary SBOM",
+  "packages": [
+    {
+      "distribution": "numpy",
+      "reference_installed_version": "2.5.4",
+      "upstream_repository": "https://github.com/numpy/numpy",
+      "source_kind": "Complete publisher-supplied license file from the locally installed distribution; dependency code/wheels are not vendored",
+      "notices": [
+        {
+          "file": "numpy-license.txt",
+          "sha256": "649a589ab31076e79e9ce62ba24eae9959598124176640dbc95f87bd10f34fcf",
+          "bytes": 46826,
+          "distribution_relative_source": "numpy-2.5.4.dist-info/licenses/LICENSE.txt"
+        }
+      ]
+    },
+    {
+      "distribution": "Pillow",
+      "reference_installed_version": "13.0.0",
+      "upstream_repository": "https://github.com/python-pillow/Pillow",
+      "source_kind": "Complete publisher-supplied license file from the locally installed distribution; dependency code/wheels are not vendored",
+      "notices": [
+        {
+          "file": "pillow-license.txt",
+          "sha256": "dda12a98c1979cf3d94df1cff45d27a4cb3f04a60c76f76902ac54cac03ec0ce",
+          "bytes": 70307,
+          "distribution_relative_source": "pillow-13.0.0.dist-info/licenses/LICENSE"
+        }
+      ]
+    },
+    {
+      "distribution": "scipy",
+      "reference_installed_version": "1.18.1",
+      "upstream_repository": "https://github.com/scipy/scipy",
+      "source_kind": "Complete publisher-supplied license file from the locally installed distribution; dependency code/wheels are not vendored",
+      "notices": [
+        {
+          "file": "scipy-license.txt",
+          "sha256": "09a1b9e19573045b0784a181cc4bef677039d4f2111631c747bf72b7f19017d4",
+          "bytes": 46848,
+          "distribution_relative_source": "scipy-1.18.1.dist-info/LICENSE.txt"
+        }
+      ]
+    },
+    {
+      "distribution": "opencv-python-headless",
+      "reference_installed_version": "5.0.0.93",
+      "upstream_repository": "https://github.com/opencv/opencv-python",
+      "source_kind": "Complete publisher-supplied license file from the locally installed distribution; dependency code/wheels are not vendored",
+      "notices": [
+        {
+          "file": "opencv-python-license.txt",
+          "sha256": "09d719058e782ac7bc71ba21c944e1136cde2bb957c0e888121f0218d6b5f02c",
+          "bytes": 1070,
+          "distribution_relative_source": "opencv_python_headless-5.0.0.93.dist-info/LICENSE.txt"
+        },
+        {
+          "file": "opencv-python-third-party.txt",
+          "sha256": "2537f5653345db7231ff12f307bcfa4c89807d45ed1c4bb8ebfb6f26f61b160a",
+          "bytes": 179634,
+          "distribution_relative_source": "opencv_python_headless-5.0.0.93.dist-info/LICENSE-3RD-PARTY.txt"
+        }
+      ]
+    },
+    {
+      "distribution": "matplotlib",
+      "reference_installed_version": "3.11.2",
+      "upstream_repository": "https://github.com/matplotlib/matplotlib",
+      "source_kind": "Complete publisher-supplied license file from the locally installed distribution; dependency code/wheels are not vendored",
+      "notices": [
+        {
+          "file": "matplotlib-license.txt",
+          "sha256": "822e8e528147569a41975592aee19c11992ab667ba50451cd929031d5fc74491",
+          "bytes": 63442,
+          "distribution_relative_source": "matplotlib-3.11.2.dist-info/LICENSE"
+        }
+      ]
+    },
+    {
+      "distribution": "pytest",
+      "reference_installed_version": "9.2.0",
+      "upstream_repository": "https://github.com/pytest-dev/pytest",
+      "source_kind": "Complete publisher-supplied license file from the locally installed distribution; dependency code/wheels are not vendored",
+      "notices": [
+        {
+          "file": "pytest-license.txt",
+          "sha256": "ca836a5f9ecca3b2f350230faa20a48fb8b145653b5568d784862df864706b9b",
+          "bytes": 1091,
+          "distribution_relative_source": "pytest-9.2.0.dist-info/licenses/LICENSE"
+        }
+      ]
+    },
+    {
+      "distribution": "CairoSVG",
+      "reference_installed_version": "2.9.1",
+      "upstream_repository": "https://github.com/Kozea/CairoSVG",
+      "source_kind": "Complete publisher-supplied license file from the locally installed distribution; dependency code/wheels are not vendored",
+      "notices": [
+        {
+          "file": "cairosvg-license.txt",
+          "sha256": "ea8af5e789cb2d4e9b10bce3874982ade163b749b6bfbdb32e2df21c4d106de1",
+          "bytes": 7650,
+          "distribution_relative_source": "cairosvg-2.9.1.dist-info/licenses/LICENSE"
+        }
+      ]
+    }
+  ]
+}

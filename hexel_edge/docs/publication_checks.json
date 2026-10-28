@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "checked_date": "2026-10-28",
+  "scope": "Public package assembly and documentation, not a new physical-device benchmark",
+  "relocation": {
+    "native_metal_checks_passed": 30,
+    "capture_pipeline_checks_passed": 29,
+    "python_checks_passed": 35,
+    "device_policy_checks": "passed",
+    "release_cli_build": "passed",
+    "unsigned_ios_release_build": "passed"
+  },
+  "public_content": {
+    "private_capture_geometry_or_checkpoints_included": false,
+    "personal_signing_or_device_identifiers_found": false,
+    "absolute_workstation_paths_found": false,
+    "benchmark_telemetry_rows": 233,
+    "benchmark_quality_rows": 34,
+    "markdown_local_links": "passed",
+    "readme_visual_check": "Hero and introduction rendered and inspected in editor Markdown preview; artwork also checked at640/960/1600px",
+    "asset_pipeline_without_local_research_folder": "passed",
+    "canonical_app_icon_matches_catalog": true,
+    "public_figures_unchanged_except_resource_memory_title": true
+  },
+  "licensing": {
+    "root_original_code": "MIT; Prakhar Kaushik and Soumava Paul",
+    "edge_original_code": "MIT; Prakhar Kaushik",
+    "third_party_notices": "separate inventory and retained reference licenses"
+  },
+  "independent_review": "No material findings; public claims/attribution/privacy/packaging reviewed.",
+  "documentation_revision": {
+    "date": "2026-10-28",
+    "scope": "Concise README and banner copy; no app implementation changes",
+    "network_condition": "20-minute offline run confirmed by tester",
+    "links_svg_and_asset_hashes": "passed",
+    "app_icon_and_public_benchmark_images": "unchanged"
+  },
+  "resource_plot_title_revision": {
+    "current_title": "Sampled memory",
+    "all_pixels_outside_memory_title_unchanged": true
+  }
+}

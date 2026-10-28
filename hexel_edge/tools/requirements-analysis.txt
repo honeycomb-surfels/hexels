@@ -1,0 +1,4 @@
+# Optional offline quality/battery report analysis and plotting.
+-r requirements.txt
+scipy>=1.13,<2
+matplotlib>=3.8,<4

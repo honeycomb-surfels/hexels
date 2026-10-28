@@ -1,4 +1,8 @@
 # Byte-compiled / optimized / DLL files
+# macOS Finder metadata (including metadata on external volumes)
+._*
+.DS_Store
+
 __pycache__/
 *.py[codz]
 *$py.class
@@ -245,3 +249,9 @@ __pycache__/
 /MILo
 /SAD
 /fused-ssim
+
+# Local on-device research, private experiments and deployment records
+/on device or edge/
+
+# Local task history; public app docs live in hexel_edge/
+/todo.md

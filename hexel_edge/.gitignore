@@ -1,0 +1,29 @@
+# Local build products and editor state
+.build/
+.swiftpm/
+build/
+DerivedData/
+xcuserdata/
+*.xcuserstate
+.DS_Store
+._*
+
+# Workstation-only credentials and signing
+.env
+.env.*
+LocalSigning.xcconfig
+*.p12
+*.mobileprovision
+
+# User scenes, datasets, model state and measurements
+data/
+outputs/
+captures/
+checkpoints/
+*.hexstate
+*.hextrain
+
+# Optional Python environments/cache
+.venv/
+__pycache__/
+.pytest_cache/

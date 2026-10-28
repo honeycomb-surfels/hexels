@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "brand": "Hexel Edge",
+  "status": "IN DEVELOPMENT",
+  "artwork": "Original code-native SVG artwork created for Hexel Edge; no stock logo or AI bitmap.",
+  "palette": {
+    "amber": "#FFC45C",
+    "charcoal": "#171D20",
+    "cream": "#FFF4DC"
+  },
+  "exports": [
+    {
+      "source": "hero.svg",
+      "source_sha256": "03a7206ac5da088e67aaecd1e6b29938b75de20e9547396ab24f0a69c02061b9",
+      "png": "hero.png",
+      "png_sha256": "9df313cb0df36756fed0e5a5a9fbc8cd76b280c50846d921809ae81952444319",
+      "dimensions": [
+        1600,
+        720
+      ]
+    },
+    {
+      "source": "logo-wordmark.svg",
+      "source_sha256": "8f346bf81902409e1a0c9428d55ea71e5b6cb9ead9b153c454215c43f64febd4",
+      "png": "logo-wordmark.png",
+      "png_sha256": "582f886165c3ca513a059af091ee1f0a65f7884f1e07181514a10ebd97556cbb",
+      "dimensions": [
+        1152,
+        280
+      ]
+    },
+    {
+      "source": "bee-icon.svg",
+      "source_sha256": "81f859db5796c2cbe9d5844088dfe97afb28d49d6ba86c8509fef0e5c095d617",
+      "png": "bee-icon.png",
+      "png_sha256": "4196faee8e33883a3ea52bcf51e565d3e52ffa4b4339503166e401ffc3862af2",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "source": "app-icon.svg",
+      "source_sha256": "b95e6e494a38ee9476fe5818f9708b4af8910968cdde87ef3751f0eabffbaa3e",
+      "png": "app-icon.png",
+      "png_sha256": "e13bd674423c352bc5ba808a873cafb42f3a0eb331ebd36ef60d208a1008da0d",
+      "dimensions": [
+        1024,
+        1024
+      ]
+    }
+  ],
+  "public_dtu_images": [
+    {
+      "file": "ipad-dtu-app.png",
+      "source": "ipad-dtu-app.png",
+      "sha256": "7727082dc819c34eb92a01d1bdaf29c51488dd435d682ede4e433c49cfd38d16",
+      "dimensions": [
+        2732,
+        2048
+      ],
+      "byte_identical": true
+    },
+    {
+      "file": "ipad-dtu-comparison.png",
+      "source": "ipad-dtu-comparison.png",
+      "sha256": "1cb450ad93505da48b79d9d77125c74a4f0f30c008ecf8326fb78bdfa5e8f90f",
+      "dimensions": [
+        1440,
+        1050
+      ],
+      "byte_identical": true
+    },
+    {
+      "file": "ipad-dtu-resources.png",
+      "source": "ipad-dtu-resources.png",
+      "sha256": "c253b71bb59aaf728cdc92214831f9050c651ea8864fa983ee6927ab2ae1a7db",
+      "dimensions": [
+        2040,
+        1326
+      ],
+      "byte_identical": false,
+      "original_export_sha256": "0efc0ea96aba922fe9b7451eb85a84e0232507a60c0b4e33529477875a52d3c9",
+      "presentation_change": "Memory panel title simplified; all pixels outside the title remain unchanged."
+    }
+  ],
+  "image_scope": "Only public DTU scan24 benchmark imagery; no private captures or desktop screenshots.",
+  "benchmark_evidence": "../results/README.md",
+  "benchmark_measurements": "../results/dtu_scan24_ipad.json",
+  "benchmark_quality": "../results/dtu_scan24_quality.csv",
+  "benchmark_telemetry": "../results/dtu_scan24_telemetry.csv",
+  "comparison_scope": "Different training recipes/view counts/budgets; development-validation views reused for selection.",
+  "resource_scope": "One M2 iPad run; memory is sampled, battery is coarse whole-device charge, thermal states are categorical.",
+  "render_command": "python hexel_edge/assets/render_assets.py"
+}

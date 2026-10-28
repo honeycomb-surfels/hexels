@@ -1,0 +1,4 @@
+# Optional training-only known-camera feature initialization, tested locally.
+-r requirements.txt
+scipy>=1.10
+opencv-python-headless>=4.8

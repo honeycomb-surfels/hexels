@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="720" viewBox="0 0 1600 720" role="img" aria-labelledby="title desc">
+  <title id="title">Hexel Edge — your 3D world, now in your hands</title>
+  <desc id="desc">In development. Make 3D scenes from guided camera captures on your own device. Your data stays with you. Local, private, efficient. An original amber geometric bee flies over a wireframe scene on charcoal.</desc>
+  <defs>
+    <linearGradient id="field" x2="1" y2=".8"><stop stop-color="#1C2428"/><stop offset="1" stop-color="#101618"/></linearGradient>
+    <radialGradient id="glow"><stop stop-color="#E5A43B" stop-opacity=".12"/><stop offset="1" stop-color="#E5A43B" stop-opacity="0"/></radialGradient>
+    <linearGradient id="honey" x2=".7" y2="1"><stop stop-color="#FFD576"/><stop offset="1" stop-color="#F2A82B"/></linearGradient>
+    <linearGradient id="wing" x2="1" y2="1"><stop stop-color="#FFF8E7"/><stop offset="1" stop-color="#DCDACB"/></linearGradient>
+    <clipPath id="abdomen"><path d="M213 241 256 221 299 241 306 310 283 353 256 376 229 353 206 310Z"/></clipPath>
+    <pattern id="hexes" width="104" height="90" patternUnits="userSpaceOnUse"><path d="m26 0 26 15v30L26 60 0 45V15Zm52 45 26 15v30l-26 15-26-15V60Z" fill="none" stroke="#FFF4DC" stroke-opacity=".035" stroke-width="1"/></pattern>
+  </defs>
+  <rect width="1600" height="720" rx="28" fill="url(#field)"/>
+  <rect x="800" width="800" height="720" rx="28" fill="url(#hexes)"/>
+  <ellipse cx="1195" cy="335" rx="425" ry="360" fill="url(#glow)"/>
+  <path d="M0 1h1600" stroke="#FFF4DC" stroke-opacity=".09"/>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+    <rect x="76" y="64" width="252" height="44" rx="22" fill="#FFC45C"/>
+    <circle cx="99" cy="86" r="4" fill="#171D20"/>
+    <text x="116" y="92" fill="#171D20" font-size="17" font-weight="750" letter-spacing="1.8">IN DEVELOPMENT</text>
+    <text x="76" y="236" fill="#FFF4DC" font-size="112" font-weight="700" letter-spacing="-5">Hexel <tspan fill="#FFC45C">Edge</tspan></text>
+    <text x="80" y="323" fill="#FFF4DC" font-size="45" font-weight="500" letter-spacing="-.8">Your 3D world,</text>
+    <text x="80" y="377" fill="#FFF4DC" font-size="45" font-weight="500" letter-spacing="-.8">now in your hands.</text>
+    <text x="80" y="446" fill="#A9B3B6" font-size="25">Make 3D scenes from guided camera captures.</text>
+    <text x="80" y="486" fill="#A9B3B6" font-size="25">On your own device. Your data stays with you.</text>
+    <g transform="translate(80 550)" font-size="18" font-weight="600" letter-spacing="1.3">
+      <rect width="132" height="45" rx="22.5" fill="#FFF4DC" fill-opacity=".055" stroke="#FFF4DC" stroke-opacity=".12"/>
+      <text x="66" y="29" text-anchor="middle" fill="#E4E5D9">LOCAL</text>
+      <rect x="147" width="155" height="45" rx="22.5" fill="#FFF4DC" fill-opacity=".055" stroke="#FFF4DC" stroke-opacity=".12"/>
+      <text x="224.5" y="29" text-anchor="middle" fill="#E4E5D9">PRIVATE</text>
+      <rect x="317" width="181" height="45" rx="22.5" fill="#FFF4DC" fill-opacity=".055" stroke="#FFF4DC" stroke-opacity=".12"/>
+      <text x="407.5" y="29" text-anchor="middle" fill="#E4E5D9">EFFICIENT</text>
+    </g>
+  </g>
+  <!-- Original scene geometry: a hexagonal ground plane and an isometric volume. -->
+  <g fill="none" stroke-linejoin="round">
+    <path d="m1200 373 253 126-253 127-253-127Z" fill="#FFC45C" fill-opacity=".025" stroke="#FFC45C" stroke-opacity=".25" stroke-width="2"/>
+    <path d="m1031 457 253 126m-169-168 253 126m-337 0 253-126m-169 168 253-126m-168-42v211" stroke="#FFC45C" stroke-opacity=".09" stroke-width="1.5"/>
+    <path d="m1200 337 142 71v142l-142 71-142-71V408Z" stroke="#FFC45C" stroke-opacity=".27" stroke-width="2"/>
+    <path d="m1058 408 142 71 142-71m-142 71v142" stroke="#FFC45C" stroke-opacity=".35" stroke-width="2"/>
+    <path d="M905 431c-62-89 54-154 120-109" stroke="#D6D9CB" stroke-opacity=".35" stroke-width="2" stroke-dasharray="3 11" stroke-linecap="round"/>
+  </g>
+  <g fill="#FFC45C"><circle cx="1058" cy="408" r="4"/><circle cx="1342" cy="408" r="4"/><circle cx="1200" cy="621" r="4"/></g>
+  <!-- Geometric bee, shared with the standalone icon. -->
+  <g transform="translate(936 42) scale(1.02)">
+    <g transform="rotate(-15 256 256)">
+      <path d="m240 239-75-2-49-58 6-70 52-17 53 49 27 76Z" fill="url(#wing)"/>
+      <path d="m272 239 75-2 49-58-6-70-52-17-53 49-27 76Z" fill="url(#wing)"/>
+      <path d="m123 110 64 71 54 57m-124-59 70 2 40-40m163-31-64 71-54 57m124-59-70 2-40-40" fill="none" stroke="#B6B4A6" stroke-opacity=".5" stroke-width="3"/>
+      <path d="m231 199-16-35-17-8m83 43 16-35 17-8" fill="none" stroke="#FFC45C" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="195" cy="155" r="7" fill="#FFC45C"/><circle cx="317" cy="155" r="7" fill="#FFC45C"/>
+      <path d="M213 241 256 221 299 241 306 310 283 353 256 376 229 353 206 310Z" fill="url(#honey)"/>
+      <g clip-path="url(#abdomen)" fill="#1B2124"><path d="M198 264h116v27H198Z"/><path d="M198 318h116v25H198Z"/></g>
+      <path d="m256 376-10 16h20Z" fill="#FFC45C"/>
+      <path d="m256 193 33 19v37l-33 19-33-19v-37Z" fill="#1B2124" stroke="#FFC45C" stroke-width="7"/>
+      <circle cx="243" cy="225" r="4" fill="#FFF4DC"/><circle cx="269" cy="225" r="4" fill="#FFF4DC"/>
+      <path d="m211 281-26 11m116-11 26 11m-112 29-18 18m100-18 18 18" fill="none" stroke="#FFC45C" stroke-width="7" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>

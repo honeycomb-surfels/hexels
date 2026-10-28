@@ -1,0 +1,4 @@
+-r requirements.txt
+pytest>=8
+# Optional acceleration for COLMAP seed sets above 5,000; DTU needs no SciPy.
+scipy>=1.10

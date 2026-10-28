@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "svg_xml_checked": [
+    "hero.svg",
+    "logo-wordmark.svg",
+    "bee-icon.svg",
+    "app-icon.svg"
+  ],
+  "external_svg_resources_or_scripts": false,
+  "exact_png_dimensions_checked": {
+    "hero.png": [
+      1600,
+      720
+    ],
+    "logo-wordmark.png": [
+      1152,
+      280
+    ],
+    "bee-icon.png": [
+      1024,
+      1024
+    ],
+    "app-icon.png": [
+      1024,
+      1024
+    ]
+  },
+  "hero_visually_inspected_widths_px": [
+    1600,
+    960,
+    640
+  ],
+  "wordmark_and_icon_visually_inspected": true,
+  "development_status_present": [
+    "hero.svg",
+    "logo-wordmark.svg"
+  ],
+  "public_benchmark_files_verified_byte_identical": [
+    "ipad-dtu-app.png",
+    "ipad-dtu-comparison.png"
+  ],
+  "renderer": {
+    "name": "CairoSVG",
+    "version": "2.9.1",
+    "Pillow": "13.0.0"
+  },
+  "notes": [
+    "Original SVG artwork; PNG exports only, no AI image generation.",
+    "Quick Look wide-image previews were cropped; final exports and visual inspection use exact-size CairoSVG renders.",
+    "No private captures, personal desktop imagery, account identifiers, or absolute local paths were added.",
+    "Bundled public DTU PNGs are hash-verified, never refreshed or rewritten; the renderer has no experiment-folder dependency."
+  ],
+  "opaque_square_ios_app_icon": {
+    "file": "app-icon.png",
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "all_alpha_values": 255,
+    "corners_opaque": true,
+    "visually_inspected": true
+  },
+  "self_contained_regeneration_checked": true,
+  "regeneration_without_experiment_folder_checked": true,
+  "public_evidence_links_exist": true,
+  "intentional_copy_revision": {
+    "files": [
+      "hero.png",
+      "hero.svg",
+      "logo-wordmark.png",
+      "logo-wordmark.svg"
+    ],
+    "tagline": "Your 3D world, now in your hands.",
+    "pills": [
+      "LOCAL",
+      "PRIVATE",
+      "EFFICIENT"
+    ],
+    "scope": "Guided camera capture and on-device privacy; no arbitrary video import claim."
+  },
+  "unmodified_icon_and_benchmark_hashes_verified": [
+    "bee-icon.svg",
+    "bee-icon.png",
+    "ipad-dtu-app.png",
+    "ipad-dtu-comparison.png",
+    "app-icon.svg",
+    "app-icon.png"
+  ],
+  "isolated_regeneration_preserves_current_image_bytes": true,
+  "resource_plot_title_revision": {
+    "old_sha256": "0efc0ea96aba922fe9b7451eb85a84e0232507a60c0b4e33529477875a52d3c9",
+    "new_sha256": "c253b71bb59aaf728cdc92214831f9050c651ea8864fa983ee6927ab2ae1a7db",
+    "changed_pixels": 5366,
+    "changed_pixel_bbox": [
+      248,
+      697,
+      831,
+      725
+    ],
+    "image_dimensions": [
+      2040,
+      1326
+    ],
+    "old_render_matches_canonical_pixels": true,
+    "all_pixels_outside_memory_title_unchanged": true,
+    "samples": 233,
+    "evaluations": 34,
+    "previous_title": "Sampled memory \u00b7 do not add the curves",
+    "current_title": "Sampled memory",
+    "measurements_and_plot_settings_unchanged": true
+  }
+}
