@@ -12,7 +12,7 @@
 
 The complete workflow has been verified on an **iPad Pro** 6th Gen. It also runs on **Apple-silicon Macs**. iPhone build and interface has been tested in the simulator only.
 
-This is an unfunded development effort - Hexels and anything associated with this project has been funded by none and has been completely done by us alone. Funding or hardware support - particularly a recent iPhone and additional test devices - would help us complete development and evaluate more systems.
+This is an unfunded development effort. Funding or hardware support - particularly a recent iPhone and additional test devices - would help us complete development and evaluate more systems.
 
 This currently works on Apple devices (if you are from Apple, please consider funding this project.) Extension to other devices is pending.
 
